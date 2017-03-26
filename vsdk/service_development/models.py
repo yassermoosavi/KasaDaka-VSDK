@@ -47,7 +47,7 @@ class Choice(VoiceServiceElement):
 class ChoiceOption(VoiceServiceElement): 
     parent = models.ForeignKey(
             Choice, 
-            #controlerne of dit wel echt cascade moet zijn???
+            #TODO: controlerne of dit wel echt cascade moet zijn???
             on_delete = models.CASCADE,
             related_name='%(app_label)s_%(class)s_parent_related')
     audio = models.ForeignKey(
@@ -58,7 +58,7 @@ class ChoiceOption(VoiceServiceElement):
             ) 
     redirect = models.ForeignKey(
             VoiceServiceElement, 
-            #controlerne of dit wel echt cascade moet zijn???
+            #TODO: controlerne of dit wel echt cascade moet zijn???
             on_delete = models.CASCADE,
             related_name='%(app_label)s_%(class)s_redirect_related')
 
@@ -73,10 +73,11 @@ class VoiceService(models.Model):
     description = models.CharField(max_length=10)
     creation_date = models.DateTimeField('date created', default=timezone.now)
     modification_date = models.DateTimeField('date last modified', default=timezone.now)
-    active = models.BooleanField('Activate this voice service')
+    active = models.BooleanField('Voice service active')
     start_element = models.ForeignKey(
             VoiceServiceElement,
             related_name='%(app_label)s_%(class)s_related')
+
 
     def __str__(self):
         return 'Voice Service: %s' % self.name
@@ -86,4 +87,9 @@ class VoiceService(models.Model):
         self.modification_date = timezone.now()
         return
 
+    def is_valid_voice_service(self):
+        #TODO: build voice service validator
+        return False
+    is_valid_voice_service.boolean = True
+    is_valid_voice_service.short_description = 'Valid'
 
