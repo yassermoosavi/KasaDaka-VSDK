@@ -7,6 +7,8 @@ import voicelabels
 
 # Create your models here.
 class VoiceServiceElement(models.Model):
+    creation_date = models.DateTimeField('date created', auto_now_add = True)
+    modification_date = models.DateTimeField('date last modified', auto_now = True)
     name = models.CharField(max_length=40)
     description = models.CharField(
             max_length = 500,
@@ -70,8 +72,8 @@ class DataPresentation(VoiceServiceElement):
 class VoiceService(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=10)
-    creation_date = models.DateTimeField('date created', default=timezone.now)
-    modification_date = models.DateTimeField('date last modified', default=timezone.now)
+    creation_date = models.DateTimeField('date created', auto_now_add = True)
+    modification_date = models.DateTimeField('date last modified', auto_now = True)
     active = models.BooleanField('Voice service active')
     start_element = models.ForeignKey(
             VoiceServiceElement,
@@ -83,11 +85,6 @@ class VoiceService(models.Model):
 
     def __str__(self):
         return 'Voice Service: %s' % self.name
-
-    def updateModificationDate(self):
-        #misschien moet hier iets met pre_save? https://docs.djangoproject.com/en/dev/ref/signals/#django.db.models.signals.pre_init
-        self.modification_date = timezone.now()
-        return
 
     def is_valid(self):
         return len(self.validator()) == 0
