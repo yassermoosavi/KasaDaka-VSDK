@@ -5,9 +5,9 @@ from django.contrib.contenttypes.models import ContentType
 
 class KasaDakaUser(models.Model):
     #TODO: disallow deletion of users?
-    callerID = models.CharField('phone number')
-    first_name = models.CharField('first name', blank = True)
-    last_name = models.CharField('last name', blank = True)
+    callerID = models.CharField('phone number',max_length=100)
+    first_name = models.CharField('first name', max_length = 100, blank = True)
+    last_name = models.CharField('last name', max_length=100, blank = True)
     creation_date = models.DateTimeField(auto_now_add = True)
     modification_date = models.DateTimeField(auto_now = True)
 
