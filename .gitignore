@@ -91,4 +91,4 @@ ENV/
 *.swp
 *.wav
 *migrations*
-*.db.sqlite3
+*db.sqlite3
