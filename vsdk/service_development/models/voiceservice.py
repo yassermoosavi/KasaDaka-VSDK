@@ -11,17 +11,26 @@ class VoiceServiceElement(models.Model):
     description = models.CharField(
             max_length = 500,
             blank = True)
-
-    def __str__(self):
-        return "Element: %s" % self.name
-
-class MessagePresentation(VoiceServiceElement):
-    message = models.ForeignKey(
-            voicelabels.models.VoiceLabel, 
+    voice_label = models.ForeignKey(
+            voicelabels.models.VoiceLabel,
             on_delete = models.SET_NULL,
             null = True,
             blank = True,
             )
+
+    def __str__(self):
+        return "Element: %s" % self.name
+
+    def is_valid(self):
+        return len(self.validator()) == 0
+
+    def validator(self):
+        if self.voice_label:
+            return self.voice_label.validator()
+        else:
+            return ['No VoiceLabel in element: "%s"'%self.name]
+
+class MessagePresentation(VoiceServiceElement):
     final_element = models.BooleanField('This element will terminate the call',default = False)
     next_element = models.ForeignKey(
             VoiceServiceElement,
@@ -33,29 +42,19 @@ class MessagePresentation(VoiceServiceElement):
     def __str__(self):
         return 'Message Element: %s' % self.name
 
+
 class Choice(VoiceServiceElement):
-    question = models.ForeignKey(
-            voicelabels.models.VoiceLabel, 
-            on_delete = models.SET_NULL,
-            null = True,
-            blank = True,
-            )
+
 
     def __str__(self):
         return self.name
 
-class ChoiceOption(VoiceServiceElement): 
+class ChoiceOption(VoiceServiceElement):
     parent = models.ForeignKey(
-            Choice, 
+            Choice,
             #TODO: controlerne of dit wel echt cascade moet zijn???
             on_delete = models.CASCADE,
             related_name='%(app_label)s_%(class)s_parent_related')
-    audio = models.ForeignKey(
-            voicelabels.models.VoiceLabel, 
-            on_delete = models.SET_NULL,
-            null = True,
-            blank = True,
-            ) 
     redirect = models.ForeignKey(
             VoiceServiceElement, 
             #TODO: controlerne of dit wel echt cascade moet zijn???
@@ -76,8 +75,11 @@ class VoiceService(models.Model):
     active = models.BooleanField('Voice service active')
     start_element = models.ForeignKey(
             VoiceServiceElement,
-            related_name='%(app_label)s_%(class)s_related')
+            related_name='%(app_label)s_%(class)s_related',
+            null = True,
+            blank = True)
 
+    supported_languages = models.ManyToManyField(voicelabels.models.Language, blank = True)
 
     def __str__(self):
         return 'Voice Service: %s' % self.name
@@ -87,9 +89,16 @@ class VoiceService(models.Model):
         self.modification_date = timezone.now()
         return
 
-    def is_valid_voice_service(self):
-        #TODO: build voice service validator
-        return False
-    is_valid_voice_service.boolean = True
-    is_valid_voice_service.short_description = 'Valid'
+    def is_valid(self):
+        return len(self.validator()) == 0
+    is_valid.boolean = True
 
+    def validator(self):
+        errors = []
+        if not self.start_element:
+            errors.append('No starting element')
+        else:
+            errors.extend(self.start_element.validator())
+        if len(self.supported_languages.all()) == 0:
+            errors.append('No supported languages')
+        return errors
