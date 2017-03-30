@@ -89,3 +89,6 @@ ENV/
 .ropeproject
 
 *.swp
+*.wav
+*migrations*
+*.db.sqlite3
