@@ -10,7 +10,7 @@ class VoiceServiceElement(models.Model):
     creation_date = models.DateTimeField('date created', auto_now_add = True)
     modification_date = models.DateTimeField('date last modified', auto_now = True)
     name = models.CharField(max_length=100)
-    service = models.ForeignKey('VoiceService', on_delete = models.CASCADE)
+#    service = models.ForeignKey('VoiceService', on_delete = models.CASCADE)
     description = models.CharField(
             max_length = 500,
             blank = True)
@@ -33,6 +33,9 @@ class VoiceServiceElement(models.Model):
             return self.voice_label.validator()
         else:
             return ['No VoiceLabel in element: "%s"'%self.name]
+
+    def get_voice_fragment_url(self, language):
+        return self.voice_label.get_voice_fragment_url(language)
 
 class MessagePresentation(VoiceServiceElement):
     final_element = models.BooleanField('This element will terminate the call',default = False)
@@ -65,12 +68,26 @@ class Choice(VoiceServiceElement):
         else:
             return ['No VoiceLabel in element: "%s"'%self.name]
 
+    def get_vxml_data(self, language):
+        """
+        Returns a dict that can be used to generate a VXML file
+        choice = this Choice element object
+        choice_voice_label = the resolved Voice Label URL for this Choice element
+        choice_options = iterable of ChoiceOption object belonging to this Choice element
+        choice_options_voice_labels = list of resolved Voice Label URL's referencing to the choice_options in the same position
+        """
+        #choice_options_voice_labels = []
+        #for choice_option in self.choice_options.all():
+        #    choice_options_voice_labels.append(choice_option.get_voice_fragment_url(language))
+        pass
+        #return (self.choice_options, choice_options_voice_labels)
+
 class ChoiceOption(VoiceServiceElement):
     parent = models.ForeignKey(
             Choice,
             #TODO: controlerne of dit wel echt cascade moet zijn???
             on_delete = models.CASCADE,
-            related_name='%(app_label)s_%(class)s_parent_related')
+            related_name='choice_options')
     redirect = models.ForeignKey(
             VoiceServiceElement, 
             #TODO: controlerne of dit wel echt cascade moet zijn???
@@ -139,4 +156,5 @@ class VoiceService(models.Model):
         return errors
 
     def get_elements(self):
+        #TODO
         return []

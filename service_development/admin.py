@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import VoiceService, MessagePresentation, Choice, ChoiceOption
+from .models import VoiceService, MessagePresentation, Choice, ChoiceOption, CallSession, KasaDakaUser
 
 
 
@@ -29,7 +29,7 @@ class VoiceServiceAdmin(admin.ModelAdmin):
 
 class VoiceServiceElementAdmin(admin.ModelAdmin):
     fieldsets = [('General',    {'fields' : [ 'is_valid', 'validation_details', 'name', 'description', 'voice_label']})]
-    list_display = ('name', 'service' ,'is_valid')
+    list_display = ('name', 'is_valid')
     readonly_fields = ('is_valid', 'validation_details')
      
     def validation_details(self, obj=None):
@@ -54,3 +54,5 @@ class ChoiceAdmin(VoiceServiceElementAdmin):
 admin.site.register(VoiceService, VoiceServiceAdmin)
 admin.site.register(MessagePresentation)
 admin.site.register(Choice, ChoiceAdmin)
+admin.site.register(CallSession)
+admin.site.register(KasaDakaUser)

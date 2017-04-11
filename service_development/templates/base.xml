@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vxml version = "2.1" >
+<property name="inputmodes" value="dtmf" /> 
+
+<!-- Kasadaka VoiceXML File -->
+
+{#This is the basic VoiceXML layout#}
+
+{% block content %}{% endblock %}
+
+</vxml>

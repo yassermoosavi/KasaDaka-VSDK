@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from .user import KasaDakaUser
 from .voiceservice import VoiceService, VoiceServiceElement
+from voicelabels.models import Language
 
 class CallSession(models.Model):
     start = models.DateTimeField(auto_now_add = True)
@@ -16,6 +17,10 @@ class CallSession(models.Model):
 
     def __str__(self):
         return "%s (%s)" % (str(self.user), str(self.start))
+
+    def get_language(self):
+        return Language.objects.all()[0]
+        #return self.user.language 
 
 class CallSessionStep(models.Model):
     time = models.DateTimeField(auto_now_add = True)
