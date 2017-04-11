@@ -121,7 +121,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+STATIC_ROOT = os.path.join(SITE_ROOT, 'staticfiles')
 STATICFILES_DIRS = (
   os.path.join(SITE_ROOT, 'static/'),
 )
@@ -129,3 +131,15 @@ STATICFILES_DIRS = (
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = '/uploads/'
 
+
+# Update database configuration with $DATABASE_URL.ALLOWED_HOSTSimport
+# dj_database_url
+
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+
+# Simplified static file serving.ALLOWED_HOSTS#
+# https://warehouse.python.org/project/whitenoise/
+
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
