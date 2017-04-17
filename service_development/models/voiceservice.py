@@ -5,13 +5,15 @@ from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
-import abc
+from model_utils.managers import InheritanceManager
 
 import voicelabels
 
 # Create your models here.
 class VoiceServiceElement(models.Model):
-    __metaclass__ = abc.ABCMeta
+
+    objects = InheritanceManager()
+
     creation_date = models.DateTimeField('date created', auto_now_add = True)
     modification_date = models.DateTimeField('date last modified', auto_now = True)
     name = models.CharField(max_length=100)
@@ -42,11 +44,16 @@ class VoiceServiceElement(models.Model):
     def get_voice_fragment_url(self, session):
         return self.voice_label.get_voice_fragment_url(session)
 
-    @abc.abstractmethod
     def get_absolute_url(self, session):
+        #this is a dirty hack to refer to the subclass object of this reference, and then call the same method there.
+
+
         #return reverse('service_development:choice', args=[str(self.id),str(session.id)])
-        #TODO what happens here? error message?A
-        return
+        #TODO what happens here? error message?
+        #subclass_objects = self.select_subclasses()
+        #if 
+        return 
+        #return VoiceServiceElement.objects.get_subclass(pk=self.id)
 
 class MessagePresentation(VoiceServiceElement):
     final_element = models.BooleanField('This element will terminate the call',default = False)
@@ -80,7 +87,12 @@ class Choice(VoiceServiceElement):
             return ['No VoiceLabel in element: "%s"'%self.name]  
 
     def get_absolute_url(self, session):
-        return reverse('service_development:choice', args=[str(self.id),str(session.id)])
+        """
+        Give the URL to reach this Choice, arguments must match those in urls.py
+        """
+        return reverse('service_development:choice', kwargs={'element_id': str(self.id),
+            'session_id':str(session.id)
+            })
 
 class ChoiceOption(VoiceServiceElement):
     parent = models.ForeignKey(
@@ -88,13 +100,22 @@ class ChoiceOption(VoiceServiceElement):
             #TODO: controlerne of dit wel echt cascade moet zijn???
             on_delete = models.CASCADE,
             related_name='choice_options')
-    redirect = models.ForeignKey(
+    _redirect = models.ForeignKey(
             VoiceServiceElement, 
             #TODO: controlerne of dit wel echt cascade moet zijn???
             on_delete = models.CASCADE,
             related_name='%(app_label)s_%(class)s_redirect_related',
             blank = True,
             null = True)
+
+    @property
+    def redirect(self):
+        """
+        Returns the actual subclassed object that is redirected to,
+        instead of the VoiceServiceElement (which does not have specific
+        fields and methods).
+        """
+        return VoiceServiceElement.objects.get_subclass(id = self._redirect.id)
 
     def __str__(self):
         return "(%s): %s" % (self.parent.name,self.name)

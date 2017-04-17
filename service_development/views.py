@@ -43,7 +43,9 @@ def choice_generate_context(choice_element, session):
 
 def choice(request, element_id, session_id):
     choice_element = get_object_or_404(Choice, pk=element_id)
-    session = CallSession()
+
+    #TODO use actual sessions
+    session = CallSession(id=1)
     context = choice_generate_context(choice_element, session)
     
     return render(request, 'choice.xml', context, content_type='text/xml')
