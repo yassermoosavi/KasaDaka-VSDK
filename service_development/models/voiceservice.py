@@ -12,6 +12,8 @@ import voicelabels
 # Create your models here.
 class VoiceServiceElement(models.Model):
 
+    #use django_model_utils to be able to find out what is the subclass of this element
+    #see: https://django-model-utils.readthedocs.io/en/latest/managers.html#inheritancemanager
     objects = InheritanceManager()
 
     creation_date = models.DateTimeField('date created', auto_now_add = True)
@@ -46,8 +48,6 @@ class VoiceServiceElement(models.Model):
 
     def get_absolute_url(self, session):
         #this is a dirty hack to refer to the subclass object of this reference, and then call the same method there.
-
-
         #return reverse('service_development:choice', args=[str(self.id),str(session.id)])
         #TODO what happens here? error message?
         #subclass_objects = self.select_subclasses()
@@ -112,8 +112,8 @@ class ChoiceOption(VoiceServiceElement):
     def redirect(self):
         """
         Returns the actual subclassed object that is redirected to,
-        instead of the VoiceServiceElement (which does not have specific
-        fields and methods).
+        instead of the VoiceServiceElement superclass object (which does
+        not have specific fields and methods).
         """
         return VoiceServiceElement.objects.get_subclass(id = self._redirect.id)
 
@@ -133,11 +133,11 @@ class ChoiceOption(VoiceServiceElement):
             errors.append('No VoiceLabel in choice option: "%s"'%self.name)
 
         #check if redirect is present
-        if not self.redirect:
+        if not self._redirect:
             errors.append('No redirect in choice option: "%s"'%self.name)
         #check whether element that will be redirected to is appointed to the same voice service
-        elif not self.redirect in self.service.get_elements():
-            errors.append('Redirect "%s" in choice option "%s" does not belong to same voice service'% (self.redirect.name, self.name))
+        #elif not self.redirect in self.service.get_elements():
+        #    errors.append('Redirect "%s" in choice option "%s" does not belong to same voice service'% (self.redirect.name, self.name))
 
         return errors
  
@@ -150,13 +150,22 @@ class VoiceService(models.Model):
     creation_date = models.DateTimeField('date created', auto_now_add = True)
     modification_date = models.DateTimeField('date last modified', auto_now = True)
     active = models.BooleanField('Voice service active')
-    start_element = models.ForeignKey(
+    _start_element = models.ForeignKey(
             VoiceServiceElement,
             related_name='%(app_label)s_%(class)s_related',
             null = True,
             blank = True)
 
     supported_languages = models.ManyToManyField(voicelabels.models.Language, blank = True)
+
+    @property
+    def start_element(self):
+        """
+        Returns the actual subclassed object that is redirected to,
+        instead of the VoiceServiceElement superclass object (which does
+        not have specific fields and methods).
+        """
+        return VoiceServiceElement.objects.get_subclass(id = self._start_element.id)
 
     def __str__(self):
         return 'Voice Service: %s' % self.name
@@ -167,7 +176,7 @@ class VoiceService(models.Model):
 
     def validator(self):
         errors = []
-        if not self.start_element:
+        if not self._start_element:
             errors.append('No starting element')
         else:
             errors.extend(self.start_element.validator())

@@ -6,7 +6,7 @@ from .models import VoiceService, MessagePresentation, Choice, ChoiceOption, Cal
 
 class VoiceServiceAdmin(admin.ModelAdmin):
     fieldsets = [('General',    {'fields' : ['active', 'is_valid', 'validation_details', 'name', 'description', 'supported_languages']}),
-                    ('Call flow', {'fields': ['start_element']})]
+                    ('Call flow', {'fields': ['_start_element']})]
     list_display = ('name','active','is_valid')
     readonly_fields = ('is_valid', 'validation_details')
 

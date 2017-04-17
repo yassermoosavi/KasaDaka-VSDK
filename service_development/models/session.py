@@ -13,7 +13,6 @@ class CallSession(models.Model):
     end = models.DateTimeField(auto_now = True)
     user = models.ForeignKey(KasaDakaUser, on_delete = models.PROTECT)
     service = models.ForeignKey(VoiceService, on_delete = models.SET_NULL, null= True)
-    path = None
 
     def __str__(self):
         return "%s (%s)" % (str(self.user), str(self.start))
@@ -24,7 +23,7 @@ class CallSession(models.Model):
 
 class CallSessionStep(models.Model):
     time = models.DateTimeField(auto_now_add = True)
-    session = models.ForeignKey(CallSession, on_delete = models.PROTECT)
+    session = models.ForeignKey(CallSession, on_delete = models.PROTECT, related_name = "steps")
     visited_element = models.ForeignKey(VoiceServiceElement, on_delete = models.SET_NULL, null = True)
 
     def __str__(self):
