@@ -15,30 +15,30 @@
     <audio src="{{ interfaceAudioDir ~ "postoption.wav" }}"/>
     {#number#}
     <audio src="{{ interfaceAudioDir ~  loop.index ~ ".wav" }}"/>
-	{% endfor %}
+    {% endfor %}{% endcomment %}
 </prompt>
 
 {# all possible inputs from the user #}
 <grammar xml:lang="en-US" root = "MYRULE" mode="dtmf">
       <rule id="MYRULE" scope = "public">
         <one-of>
-          {% for option in options %}
-            <item>{{ loop.index }}</item>
+          {% for option in choice_options %}
+            <item>{{ forloop.counter }}</item>
           {% endfor %}
         </one-of>
        </rule>
-     </grammar>
-
+</grammar>
 
 {# when there has been input, redirect the user to the corresponding URL #}
 <filled>
-    {% for option in options %}
-      {% if loop.index == 1 %}
-      <if cond="question1 == '{{ loop.index }}'">
-      <goto next="{{option[0]}}"/>
+    {% for option_redirect in choice_options_redirect_urls %}
+      {% if forloop.counter == 1 %}
+      <if cond="field1 == '{{ forloop.counter }}'">
+	      {% comment %} TODO hoe doe je een url opzoeken als je nog niet weet welke class object je naar refereert? {% endcomment %}
+      <goto next="{{ option_redirect }}"/>
       {% else %}
-      <elseif cond="question1 == '{{ loop.index }}'" />
-      <goto next="{{option[0]}}"/>
+      <elseif cond="field1 == '{{ forloop.counter }}'" />
+      <goto next="{{ option_redirect }}"/>
       {% endif %}
     {% endfor %}
 
@@ -48,5 +48,5 @@
   </filled>
 
 </field>
-</form>{% endcomment %}
+</form>
 {% endblock %}

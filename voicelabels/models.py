@@ -15,8 +15,9 @@ class VoiceLabel(models.Model):
     def validator(self):
         return []
 
-    def get_voice_fragment_url(self, language):
-        return self.voicefragment_set.filter(language=language)[0].get_voice_fragment_url()
+    def get_voice_fragment_url(self, session):
+        language = session.get_language()
+        return self.voicefragment_set.filter(language=language)[0].get_url()
 
 class Language(models.Model):
     name = models.CharField(max_length=100, unique = True)
@@ -38,5 +39,5 @@ class VoiceFragment(models.Model):
     def __str__(self):
         return "Voice Fragment: (%s) %s" % (self.language.name, self.parent.name)
 
-    def get_voice_fragment_url(self):
+    def get_url(self):
         return self.audio.url

@@ -93,3 +93,4 @@ ENV/
 *migrations*
 *db.sqlite3
 uploads/*
+vsdk/settings.py

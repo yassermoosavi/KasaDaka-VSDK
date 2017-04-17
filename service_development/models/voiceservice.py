@@ -2,11 +2,16 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+
+import abc
 
 import voicelabels
 
 # Create your models here.
 class VoiceServiceElement(models.Model):
+    __metaclass__ = abc.ABCMeta
     creation_date = models.DateTimeField('date created', auto_now_add = True)
     modification_date = models.DateTimeField('date last modified', auto_now = True)
     name = models.CharField(max_length=100)
@@ -34,8 +39,14 @@ class VoiceServiceElement(models.Model):
         else:
             return ['No VoiceLabel in element: "%s"'%self.name]
 
-    def get_voice_fragment_url(self, language):
-        return self.voice_label.get_voice_fragment_url(language)
+    def get_voice_fragment_url(self, session):
+        return self.voice_label.get_voice_fragment_url(session)
+
+    @abc.abstractmethod
+    def get_absolute_url(self, session):
+        #return reverse('service_development:choice', args=[str(self.id),str(session.id)])
+        #TODO what happens here? error message?A
+        return
 
 class MessagePresentation(VoiceServiceElement):
     final_element = models.BooleanField('This element will terminate the call',default = False)
@@ -66,21 +77,10 @@ class Choice(VoiceServiceElement):
         if self.voice_label:
             return self.voice_label.validator()
         else:
-            return ['No VoiceLabel in element: "%s"'%self.name]
+            return ['No VoiceLabel in element: "%s"'%self.name]  
 
-    def get_vxml_data(self, language):
-        """
-        Returns a dict that can be used to generate a VXML file
-        choice = this Choice element object
-        choice_voice_label = the resolved Voice Label URL for this Choice element
-        choice_options = iterable of ChoiceOption object belonging to this Choice element
-        choice_options_voice_labels = list of resolved Voice Label URL's referencing to the choice_options in the same position
-        """
-        #choice_options_voice_labels = []
-        #for choice_option in self.choice_options.all():
-        #    choice_options_voice_labels.append(choice_option.get_voice_fragment_url(language))
-        pass
-        #return (self.choice_options, choice_options_voice_labels)
+    def get_absolute_url(self, session):
+        return reverse('service_development:choice', args=[str(self.id),str(session.id)])
 
 class ChoiceOption(VoiceServiceElement):
     parent = models.ForeignKey(
@@ -119,7 +119,6 @@ class ChoiceOption(VoiceServiceElement):
             errors.append('Redirect "%s" in choice option "%s" does not belong to same voice service'% (self.redirect.name, self.name))
 
         return errors
-
  
 class DataPresentation(VoiceServiceElement):
     pass
