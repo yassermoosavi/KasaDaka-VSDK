@@ -52,8 +52,9 @@ class VoiceServiceElement(models.Model):
         #TODO what happens here? error message?
         #subclass_objects = self.select_subclasses()
         #if 
-        return 
+     #   return 
         #return VoiceServiceElement.objects.get_subclass(pk=self.id)
+        return reverse(self._urls_name, kwargs= {'element_id':str(self.id), 'session_id':session.id})
 
 class MessagePresentation(VoiceServiceElement):
     final_element = models.BooleanField('This element will terminate the call',default = False)
@@ -69,7 +70,7 @@ class MessagePresentation(VoiceServiceElement):
 
 
 class Choice(VoiceServiceElement):
-
+    _urls_name = 'service_development:choice'
 
     def __str__(self):
         return self.name
@@ -86,13 +87,13 @@ class Choice(VoiceServiceElement):
         else:
             return ['No VoiceLabel in element: "%s"'%self.name]  
 
-    def get_absolute_url(self, session):
-        """
-        Give the URL to reach this Choice, arguments must match those in urls.py
-        """
-        return reverse('service_development:choice', kwargs={'element_id': str(self.id),
-            'session_id':str(session.id)
-            })
+
+    #def get_absolute_url(self, **kwargs):
+    #    """
+    #    Give the URL to reach this Choice, arguments must match those in urls.py
+    #    """
+    #    return reverse('service_development:choice')
+    #    return reverse('service_development:choice', kwargs= {'element_id':'str(self.id)'})
 
 class ChoiceOption(VoiceServiceElement):
     parent = models.ForeignKey(
@@ -155,6 +156,7 @@ class VoiceService(models.Model):
             related_name='%(app_label)s_%(class)s_related',
             null = True,
             blank = True)
+    requires_registration = models.BooleanField('Requires user registration')
 
     supported_languages = models.ManyToManyField(voicelabels.models.Language, blank = True)
 

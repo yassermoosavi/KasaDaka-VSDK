@@ -1,16 +1,33 @@
-from django.shortcuts import render, get_object_or_404, get_list_or_404
+from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 from django.http import HttpResponse
 
-from .models import Choice, CallSession, CallSessionStep
+from .models import Choice, VoiceService
+
+from voicelabels.models import Language
+from usage.models import lookup_or_create_session
+from usage.models import KasaDakaUser
 # Create your views here.
 
 def index(request):
     return HttpResponse('This is the VoiceXML generator')
 
-def session_step_record(session, element):
-    step = CallSessionStep(session = session, visited_element = element)
-    step.save()
-    return
+def redirect_to_voice_service_element(element,session):
+    """
+    Redirects to a VoiceServiceElement (of unknown subclass), including the session_id in the request.
+    """
+    return redirect(element._urls_name, element_id = element.id, session_id = session.id)
+
+def redirect_add_get_parameters(url_name, *args, **kwargs):
+    """
+    Like Django's redirect(), but adds GET parameters at the end of the URL.
+    """
+    from django.core.urlresolvers import reverse 
+    from django.http import HttpResponseRedirect
+    import urllib
+    url = reverse(url_name, args = args)
+    params = urllib.parse.urlencode(kwargs)
+    return HttpResponseRedirect(url + "?%s" % params)
+
 
 def choice_options_resolve_redirect_urls(choice_options, session):
     choice_options_redirection_urls = []
@@ -56,50 +73,38 @@ def choice(request, element_id, session_id):
     
     return render(request, 'choice.xml', context, content_type='text/xml')
 
-def voice_service_start(request, voice_service_id, caller_id):
+def get_caller_id_from_GET_request(request):
+    if 'caller_id' in request.GET:
+        return request.GET['caller_id']
+    elif 'callerid' in request.GET:
+        return request.GET['callerid']
+    return None
+
+
+def voice_service_start(request, voice_service_id, session_id = None):
     """
     Resolves the user, else redirects to user registration VoiceXML.
     Creates a new session, then redirects to the first element of the service. 
     """
+    #set/get voice_service and caller_id
     voice_service = get_object_or_404(VoiceService, pk=voice_service_id)
+    caller_id = get_caller_id_from_GET_request(request) 
+    session = lookup_or_create_session(voice_service, session_id)
     
-    #try to lookup user, if user is new, redirect to user-registration
-    try:
-        user = KasaDakaUser.objects.get(caller_id = caller_id)
-    except KasaDakaUser.DoesNotExist:
-        return redirect('user-registration',
-                caller_id = caller_id,
-                voice_service_id = voice_service_id)
+    #If the session is not yet linked to an user, try to look up the user by Caller ID, and link it to the session
+    if not session.user:
+        user = KasaDakaUser.lookup_by_caller_id(caller_id, session.service)
+        session.link_to_user(user)
 
-    #create new session
-    session = CallSession(user = user, service = voice_service)
-    session.save()
-
-    #redirect to starting element of voice service
-    return redirect(voice_service.start_element, session_id = session.id)
-
-def user_registration(request, caller_id = None, voice_service_id = None):
-    """
-    Registers the user to the system
-    """
-
-    if request.method == "POST":
-        #if all elements are filled, register the user
-        if set(('caller_id','voice_service_id','language_id')) <= set(request.POST):
-            caller_id = request.POST['caller_id']
-            voice_service_id = request.POST['voice_service_id']
-            language = request.POST['language_id']
-    elif caller_id and voice_service_id:
-        pass
-    else:
-        raise 
-
-        
-    voice_service = get_object_or_404(VoiceService, pk=voice_service_id)
+    #If the user cannot be found (thus is not registered yet), and registration is required, redirect to registration form
+    if not session.user and voice_service.requires_registration:
+        return redirect_add_get_parameters('service_development:usage:user-registration',
+                    caller_id = caller_id,
+                    session_id = session.id)
     
-    #ask user for preferred language
+    #If user is found or registration not needed, redirect to starting element of voice service
+    return redirect_to_voice_service_element(voice_service.start_element, session)
 
-    user = KasaDakaUser(caller_id = caller_id,
-            language = language,
-            service = voice_service)
-    return
+
+
+

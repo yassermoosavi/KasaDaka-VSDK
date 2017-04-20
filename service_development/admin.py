@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import VoiceService, MessagePresentation, Choice, ChoiceOption, CallSession, KasaDakaUser
+from .models import VoiceService, MessagePresentation, Choice, ChoiceOption
 
 
 
@@ -54,5 +54,4 @@ class ChoiceAdmin(VoiceServiceElementAdmin):
 admin.site.register(VoiceService, VoiceServiceAdmin)
 admin.site.register(MessagePresentation)
 admin.site.register(Choice, ChoiceAdmin)
-admin.site.register(CallSession)
-admin.site.register(KasaDakaUser)
+

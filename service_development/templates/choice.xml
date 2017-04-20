@@ -8,7 +8,7 @@
 				<audio src="{{ option_voice_label }}"/>
 			{% endfor %}
 
-					 {% comment %}<audio src="{{ interfaceAudioDir ~ "preoption.wav" }}"/>
+			 {% comment %}<audio src="{{ interfaceAudioDir ~ "preoption.wav" }}"/>
     {#option#}
     <audio src="{{ option[1] }}"/>
     {#press#}

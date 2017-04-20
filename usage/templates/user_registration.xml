@@ -1,0 +1,54 @@
+{% extends "base.xml" %}
+{% block content%}
+<form id="registration">
+	<field name="language_field">
+		<prompt>
+			{% for language_voice_label in language_voice_labels %}
+			<audio src="{{ language_voice_label }}"/>
+			{% endfor %}
+		</prompt>
+
+
+
+   <grammar xml:lang="en-US" root = "MYRULE" mode="dtmf">
+      <rule id="MYRULE" scope = "public">
+        <one-of>
+          {% for language in languages %}
+            <item>{{ forloop.counter }}</item>
+          {% endfor %}
+        </one-of>
+       </rule>
+   </grammar>
+   {# when there has been input, save the corresponding URI in the given variable #}
+   <filled>
+    {% for language in languages %}
+      {% if forloop.counter == 1 %}
+      <if cond="language_field == '{{ forloop.counter }}'">
+		  <assign name="language_id" expr="'{{ language.id }}'"/>
+      {% else %}
+      <elseif cond="language_field == '{{ forloop.counter }}'" />
+      <assign name="language_id" expr="'{{ language.id }}'"/>
+      {% endif %}
+    {% endfor %}
+
+
+    <else/>
+    </if>
+
+    <goto next="#submit_form"/>
+  </filled>
+ </field>
+</form>
+
+
+<form id="submit_form">
+<block>
+{# include the session_id and caller_id in the POST variables #}
+<assign name="session_id" expr="'{{ session.id }}'"/>
+<assign name="caller_id" expr="'{{ caller_id }}'"/>
+<submit next="{% url 'service-development:usage:user-registration' %}" method="post" namelist="session_id language_id"/>
+</block>
+</form>
+
+
+{% endblock %}
