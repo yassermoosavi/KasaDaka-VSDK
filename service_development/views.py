@@ -89,7 +89,7 @@ def user_registration(request, caller_id = None, voice_service_id = None):
             caller_id = request.POST['caller_id']
             voice_service_id = request.POST['voice_service_id']
             language = request.POST['language_id']
-    else if caller_id && voice_service_id:
+    elif caller_id and voice_service_id:
         pass
     else:
         raise 
