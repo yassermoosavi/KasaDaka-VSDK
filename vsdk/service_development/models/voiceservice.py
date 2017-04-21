@@ -35,6 +35,16 @@ class VoiceService(models.Model):
         """
         return VoiceServiceElement.objects.get_subclass(id = self._start_element.id)
 
+    @property
+    def supports_single_language(self):
+        """
+        Returns True if this service supports a single language
+        """
+        if len(self.supported_languages.all()) == 1:
+            return True
+        else:
+            return False
+    
     def __str__(self):
         return 'Voice Service: %s' % self.name
 
