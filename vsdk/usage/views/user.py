@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 
-from usage.models import KasaDakaUser, CallSession
+from ..models import KasaDakaUser, CallSession
 
-from voicelabels.models import Language
+from vsdk.voicelabels.models import Language
 
 def user_registration_form(request, session, caller_id):
     """

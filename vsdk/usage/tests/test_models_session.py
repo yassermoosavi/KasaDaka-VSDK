@@ -2,7 +2,7 @@ import pytest
 from mixer.backend.django import mixer
 pytestmark = pytest.mark.django_db
 
-from usage.models.session import lookup_or_create_session, CallSession
+from vsdk.usage.models.session import lookup_or_create_session, CallSession
 
 class TestCallSession:
     

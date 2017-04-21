@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 
 from model_utils.managers import InheritanceManager
 
-import voicelabels
+from vsdk import voicelabels
 
 # Create your models here.
 class VoiceServiceElement(models.Model):

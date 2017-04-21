@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from usage import views
+from . import views
 
 app_name = 'usage'
 urlpatterns = [

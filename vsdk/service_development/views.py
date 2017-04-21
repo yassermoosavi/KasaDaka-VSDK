@@ -3,9 +3,9 @@ from django.http import HttpResponse
 
 from .models import Choice, VoiceService
 
-from voicelabels.models import Language
-from usage.models import lookup_or_create_session
-from usage.models import KasaDakaUser
+from ..voicelabels.models import Language
+from ..usage.models import lookup_or_create_session
+from ..usage.models import KasaDakaUser
 # Create your views here.
 
 def index(request):

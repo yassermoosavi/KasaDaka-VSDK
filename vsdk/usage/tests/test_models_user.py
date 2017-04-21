@@ -2,6 +2,9 @@ import pytest
 from mixer.backend.django import mixer
 pytestmark = pytest.mark.django_db
 
+from ..models.user import lookup_by_caller_id
+
+
 class TestKasaDakaUser:
     caller_id = "+1234"
     first_name = "henk"
@@ -25,7 +28,7 @@ class TestKasaDakaUser:
         assert str(obj) == self.first_name + " " + self.last_name  + " (" + self.caller_id + ")"
 
     def test_lookup_by_caller_id(self):
-        from usage.models.user import lookup_by_caller_id
+
         
         assert lookup_by_caller_id("1","1") == None
         

@@ -5,8 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 
 from phonenumber_field.modelfields import PhoneNumberField
 
-from voicelabels.models import Language
-from service_development.models import VoiceService
+from vsdk.voicelabels.models import Language
+from vsdk.service_development.models import VoiceService
 
 class KasaDakaUser(models.Model):
     """

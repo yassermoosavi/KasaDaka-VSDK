@@ -32,9 +32,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'voicelabels.apps.VoicelabelsConfig',
-    'service_development.apps.ServiceDevelopmentConfig',
-    'usage.apps.UsageConfig',
+    'vsdk.voicelabels.apps.VoicelabelsConfig',
+    'vsdk.service_development.apps.ServiceDevelopmentConfig',
+    'vsdk.usage.apps.UsageConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
