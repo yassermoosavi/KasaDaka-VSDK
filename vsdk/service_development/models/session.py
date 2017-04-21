@@ -13,16 +13,34 @@ class CallSession(models.Model):
     #TODO: make some kind of handler when the Asterisk connection is closed, to officially end the session.
     end = models.DateTimeField(auto_now = True)
     user = models.ForeignKey(KasaDakaUser, on_delete = models.PROTECT, null = True, blank = True)
+    caller_id = models.CharField(max_length = 100, blank = True, null = True)
     service = models.ForeignKey(VoiceService, on_delete = models.SET_NULL, null = True)
+    _language = models.ForeignKey(Language,on_delete = models.SET_NULL, null = True)
 
     def __str__(self):
         return "%s (%s)" % (str(self.user), str(self.start))
 
-    def get_language(self):
-        if self.user:
-            return self.user.language 
-        #TODO maybe return default language?
-        return None
+    @property
+    def language(self):
+        """
+        Tries to determine the language of the session, taking into account
+        the voice service, user preferences and possibly an already set language
+        for the session. 
+        Returns a determined to be valid Language for the Session.
+        Returns None if the language cannot be determined.
+        """
+        if self.service:
+            if self.service.supports_single_language:
+                self._language = self.service.supported_languages.all()[0]
+            elif self.user and self.user.language in self.service.supported_languages.all(): 
+                    self._language = self.user.language
+            elif self._language and not self._language in self.service.supported_languages.all():
+                    self._language = None
+        else:
+            self._language = None
+        
+        self.save()
+        return self._language
     
     def record_step(self, element):
         step = CallSessionStep(session = self, _visited_element = element)
@@ -52,10 +70,12 @@ class CallSessionStep(models.Model):
         return VoiceServiceElement.objects.get_subclass(id = self._visited_element.id)
 
 
-def lookup_or_create_session(voice_service, session_id=None):
+def lookup_or_create_session(voice_service, session_id=None, caller_id = None):
     if session_id:
         session = get_object_or_404(CallSession, pk = session_id)
     else:
-        session = CallSession(service = voice_service) 
+        session = CallSession.objects.create(
+                service = voice_service,
+                caller_id = caller_id) 
         session.save()
     return session

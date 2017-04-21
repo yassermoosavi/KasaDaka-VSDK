@@ -2,9 +2,14 @@ import pytest
 from mixer.backend.django import mixer
 pytestmark = pytest.mark.django_db
 
+from django.test import TestCase
 from ..models.session import lookup_or_create_session, CallSession
 
-class TestCallSession:
+class TestCallSession(TestCase):
+    def setUp(self):
+        self.lang = mixer.blend('service_development.Language')
+        self.lang2 = mixer.blend('service_development.Language')
+        self.lang3 = mixer.blend('service_development.Language')
     
     def test_init(self):
         obj = mixer.blend('service_development.CallSession')
@@ -14,15 +19,54 @@ class TestCallSession:
         obj = mixer.blend('service_development.CallSession')
         assert str(obj) == str(obj.user) + " (" + str(obj.start) + ")"
 
-    def test_get_language(self):
-        user = mixer.blend('service_development.KasaDakaUser')
+    def test_get_session_language_user_language(self):
+        user = mixer.blend('service_development.KasaDakaUser',
+                language = self.lang)
+        service = mixer.blend('service_development.VoiceService',
+                supported_languages = ())
         obj = mixer.blend('service_development.CallSession',
-                user = user)
-        assert obj.get_language() == obj.user.language , 'Language should be language of user'
+                user = user,
+                service = service)
+        assert obj.language == None , 'If user preferred language is not supported by service, language cannot be determined'
+        
+        service = mixer.blend('service_development.VoiceService',
+                supported_languages = (self.lang,self.lang2))
+        obj = mixer.blend('service_development.CallSession',
+                user = user,
+                service = service)
+        assert obj.language == obj.user.language , 'Language should be language of user'
+
+    def test_get_session_language_no_voice_service(self):
+        obj = mixer.blend('service_development.CallSession', 
+                service = None)
+        assert obj.language == None , 'Without Service, language cannot be determined'
+
+    def test_get_session_language_service_single_language(self):
+        user = mixer.blend('service_development.KasaDakaUser',
+                language = self.lang)
+        service = mixer.blend('service_development.VoiceService',
+                supported_languages = (self.lang2))
+        obj = mixer.blend('service_development.CallSession',
+                service = service)
+        assert obj.language == self.lang2 , 'If service only supports single language, this will be session language.'
+        
+        obj = mixer.blend('service_development.CallSession',
+                user = user,
+                service = service)
+        assert obj.language == self.lang2 , 'If service only supports single language, this will be session language.'
+
+    def test_get_session_language_service_defined_in_session(self):
+        service = mixer.blend('service_development.VoiceService',
+                supported_languages = (self.lang2, self.lang3))
+        obj = mixer.blend('service_development.CallSession',
+                service = service,
+                _language = self.lang)
+        assert obj.language == None , 'If language in session is not supported by service, language cannot be determined.'
 
         obj = mixer.blend('service_development.CallSession',
-                user = None)
-        assert obj.get_language() == None , 'Session without user (and thus language) is possible'
+                service = service,
+                _language = self.lang2)
+        assert obj.language == self.lang2 , 'If language set in session is supported by service, this language will be used.'
 
     def test_record_step(self):
         session = mixer.blend('service_development.CallSession')
