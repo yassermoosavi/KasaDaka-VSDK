@@ -4,9 +4,9 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
 
-from .user import KasaDakaUser
-from vsdk.service_development.models import VoiceService, VoiceServiceElement
-from vsdk.voicelabels.models import Language
+from . import KasaDakaUser
+from . import VoiceService, VoiceServiceElement
+from . import Language
 
 class CallSession(models.Model):
     start = models.DateTimeField(auto_now_add = True)

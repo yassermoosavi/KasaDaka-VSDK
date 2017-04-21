@@ -5,8 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 
 from phonenumber_field.modelfields import PhoneNumberField
 
-from vsdk.voicelabels.models import Language
-from vsdk.service_development.models import VoiceService
+from . import Language
+from . import VoiceService
 
 class KasaDakaUser(models.Model):
     """
@@ -30,7 +30,7 @@ class KasaDakaUser(models.Model):
             return "%s %s (%s)" % (self.first_name, self.last_name, self.caller_id)
 
 
-def lookup_by_caller_id(caller_id, service):
+def lookup_kasadaka_user_by_caller_id(caller_id, service):
     """
     If user with caller_id for current voice_service exists, returns User object.
     If user does not exist or caller_id is None, returns None.

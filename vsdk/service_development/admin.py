@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import VoiceService, MessagePresentation, Choice, ChoiceOption
+from .models import VoiceService, MessagePresentation, Choice, ChoiceOption, VoiceFragment, CallSession, KasaDakaUser, Language, VoiceLabel
 
 
 
@@ -47,6 +47,13 @@ class ChoiceOptionsInline(admin.TabularInline):
 class ChoiceAdmin(VoiceServiceElementAdmin):
     inlines = [ChoiceOptionsInline]
 
+class VoiceLabelInline(admin.TabularInline):
+    model = VoiceFragment
+    extra = 2
+    fk_name = 'parent'
+
+class VoiceLabelAdmin(admin.ModelAdmin):
+    inlines = [VoiceLabelInline]
 
 
 # Register your models here.
@@ -54,4 +61,12 @@ class ChoiceAdmin(VoiceServiceElementAdmin):
 admin.site.register(VoiceService, VoiceServiceAdmin)
 admin.site.register(MessagePresentation)
 admin.site.register(Choice, ChoiceAdmin)
+admin.site.register(CallSession)
+admin.site.register(KasaDakaUser)
+
+
+
+# Register your models here.
+admin.site.register(Language)
+admin.site.register(VoiceLabel, VoiceLabelAdmin)
 

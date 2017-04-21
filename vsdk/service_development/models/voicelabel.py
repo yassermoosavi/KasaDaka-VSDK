@@ -1,6 +1,5 @@
 from django.db import models
 
-# Create your models here.
 
 class VoiceLabel(models.Model):
     name = models.CharField(max_length=50)
@@ -40,3 +39,4 @@ class VoiceFragment(models.Model):
 
     def get_url(self):
         return self.audio.url
+

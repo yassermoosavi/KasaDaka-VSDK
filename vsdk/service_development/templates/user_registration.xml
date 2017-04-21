@@ -46,7 +46,7 @@
 {# include the session_id and caller_id in the POST variables #}
 <assign name="session_id" expr="'{{ session.id }}'"/>
 <assign name="caller_id" expr="'{{ caller_id }}'"/>
-<submit next="{% url 'service-development:usage:user-registration' %}" method="post" namelist="session_id language_id"/>
+<submit next="{% url 'service-development:user-registration' %}" method="post" namelist="session_id language_id"/>
 </block>
 </form>
 
