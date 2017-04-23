@@ -19,6 +19,12 @@ def create_sample_voice_service(cls):
                 code="nl",
                 voice_label =  cls.voice_label,
                 error_message = cls.voice_label)
+        cls.language2 = Language.objects.create(
+                name="English",
+                code="en",
+                voice_label =  cls.voice_label,
+                error_message = cls.voice_label)
+
 
         cls.voice_service = VoiceService.objects.create(
                 name="testservice",

@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 
 from ..models import VoiceService, KasaDakaUser, lookup_or_create_session, lookup_kasadaka_user_by_caller_id
@@ -12,12 +13,18 @@ def get_caller_id_from_GET_request(request):
     return None
 
 
+
 def voice_service_start(request, voice_service_id, session_id = None):
     """
     Resolves the user, else redirects to user registration VoiceXML.
     Creates a new session, then redirects to the first element of the service. 
     """
     voice_service = get_object_or_404(VoiceService, pk=voice_service_id)
+
+    if not voice_service.active:
+        # TODO make a nice error message
+        raise Http404()
+
     caller_id = get_caller_id_from_GET_request(request) 
     session = lookup_or_create_session(voice_service, session_id, caller_id)
     

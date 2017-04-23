@@ -29,7 +29,7 @@ def choice_generate_context(choice_element, session):
     choice_options_redirect_urls = list of resolved redirection URL's referencing to the choice_options in the same position
         """
     choice_options =  choice_element.choice_options.all()
-    language = session.user.language
+    language = session.language
     context = {'choice':choice_element,
                 'choice_voice_label':choice_element.get_voice_fragment_url(language),
                 'choice_options': choice_options,

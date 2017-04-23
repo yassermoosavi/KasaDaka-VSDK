@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 
@@ -16,7 +17,8 @@ class VoiceService(models.Model):
     description = models.CharField(max_length=10)
     creation_date = models.DateTimeField('date created', auto_now_add = True)
     modification_date = models.DateTimeField('date last modified', auto_now = True)
-    active = models.BooleanField('Voice service active')
+    active = models.BooleanField('Voice service active',
+            help_text = "This voice service is only accessible for users when marked active.")
     _start_element = models.ForeignKey(
             VoiceServiceElement,
             related_name='%(app_label)s_%(class)s_related',
@@ -44,6 +46,13 @@ class VoiceService(models.Model):
             return True
         else:
             return False
+
+
+    def get_vxml_url(self):
+        return reverse(self._urls_name, kwargs ={'voice_service_id': self.id})
+    get_vxml_url.short_description = "VoiceXML endpoint URL"
+    get_vxml_url.description = "The URL that can be set in a VoiceXML Browser to access this voice service."
+    vxml_url = property(get_vxml_url)
     
     def __str__(self):
         return 'Voice Service: %s' % self.name

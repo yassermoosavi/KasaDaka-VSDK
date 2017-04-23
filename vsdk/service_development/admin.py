@@ -1,14 +1,14 @@
 from django.contrib import admin
+
 from .models import VoiceService, MessagePresentation, Choice, ChoiceOption, VoiceFragment, CallSession, KasaDakaUser, Language, VoiceLabel
 
 
-
-
 class VoiceServiceAdmin(admin.ModelAdmin):
-    fieldsets = [('General',    {'fields' : ['active', 'is_valid', 'validation_details', 'name', 'description', 'supported_languages']}),
+    fieldsets = [('General',    {'fields' : ['vxml_url', 'active', 'is_valid', 'validation_details', 'name', 'description', 'supported_languages']}),
+                    ('Requirements', {'fields': ['requires_registration']}),
                     ('Call flow', {'fields': ['_start_element']})]
     list_display = ('name','active','is_valid')
-    readonly_fields = ('is_valid', 'validation_details')
+    readonly_fields = ('vxml_url', 'is_valid', 'validation_details')
 
     def get_readonly_fields(self, request, obj=None):
         """
@@ -18,6 +18,7 @@ class VoiceServiceAdmin(admin.ModelAdmin):
             if not obj.is_valid():
                 return self.readonly_fields + ('active',)
         return self.readonly_fields
+
 
     def validation_details(self, obj=None):
         """
@@ -43,6 +44,7 @@ class ChoiceOptionsInline(admin.TabularInline):
     model = ChoiceOption
     extra = 2
     fk_name = 'parent'
+    view_on_site = False
 
 class ChoiceAdmin(VoiceServiceElementAdmin):
     inlines = [ChoiceOptionsInline]
@@ -63,10 +65,6 @@ admin.site.register(MessagePresentation)
 admin.site.register(Choice, ChoiceAdmin)
 admin.site.register(CallSession)
 admin.site.register(KasaDakaUser)
-
-
-
-# Register your models here.
 admin.site.register(Language)
 admin.site.register(VoiceLabel, VoiceLabelAdmin)
 

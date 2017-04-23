@@ -1,6 +1,6 @@
 {% extends "base.xml" %}
 {% block content%}
-<form id="registration">
+<form id="language_form">
 	<field name="language_field">
 		<prompt>
 			{% for language_voice_label in language_voice_labels %}
@@ -43,10 +43,11 @@
 
 <form id="submit_form">
 <block>
-{# include the session_id and caller_id in the POST variables #}
-<assign name="session_id" expr="'{{ session.id }}'"/>
-<assign name="caller_id" expr="'{{ caller_id }}'"/>
-<submit next="{% url 'service-development:user-registration' %}" method="post" namelist="session_id language_id"/>
+	{# include the variables in the dictionary 'pass_on_variables' as POST variables #}
+	{% for key, value in pass_on_variables.items %}
+	<assign name="{{ key }}" expr="'{{ value }}'"/>
+	{% endfor %}
+	<submit next="{{ redirect_url }}" method="post" namelist="language_id {% for key, value in pass_on_variables.items %} {{ key }} {% endfor %}"/>
 </block>
 </form>
 

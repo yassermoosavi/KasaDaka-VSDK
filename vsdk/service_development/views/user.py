@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
+from django.urls import reverse
+
 
 from ..models import KasaDakaUser, CallSession
 
@@ -9,17 +11,20 @@ def user_registration_form(request, session, caller_id):
     Renders the user registration VoiceXML form.
     This form consists of:
     - Selecting the preferred language
+    - Speaking and recording of the name of the user
     """
+    
     #get all supported languages
     languages = session.service.supported_languages.all()
     language_voice_labels = []
     for language in languages:
         language_voice_labels.append(language.voice_label.get_voice_fragment_url(language))
-
+    pass_on_variables = {'session_id':session.id,
+            'caller_id':caller_id}
     context = {'languages':languages,
             'language_voice_labels': language_voice_labels,
-            'caller_id': caller_id,
-            'session': session
+            'pass_on_variables': pass_on_variables,
+            'redirect_url': reverse('service-development:user-registration'),
             }
     return render(request, 'user_registration.xml', context, content_type='text/xml')
 
