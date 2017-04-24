@@ -34,7 +34,8 @@ def choice_generate_context(choice_element, session):
                 'choice_voice_label':choice_element.get_voice_fragment_url(language),
                 'choice_options': choice_options,
                 'choice_options_voice_labels':choice_options_resolve_voice_labels(choice_options, language),
-                    'choice_options_redirect_urls': choice_options_resolve_redirect_urls(choice_options,session),      
+                    'choice_options_redirect_urls': choice_options_resolve_redirect_urls(choice_options,session),
+                    'language': language,
                     }
     return context
 

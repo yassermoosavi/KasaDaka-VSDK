@@ -3,8 +3,11 @@
 <form id="language_form">
 	<field name="language_field">
 		<prompt>
-			{% for language_voice_label in language_voice_labels %}
-			<audio src="{{ language_voice_label }}"/>
+			{% for language in languages %}
+			<audio src="{{ language.get_interface_voice_label_url_dict.pre_choice_option }}"/>
+			<audio src="{{ language.get_interface_voice_label_url_dict.voice_label }}"/>
+			<audio src="{{ language.get_interface_voice_label_url_dict.post_choice_option }}"/>
+			{% for number in language.get_interface_numbers_voice_label_url_list %}{% if forloop.counter0 == forloop.parentloop.counter %}<audio src="{{ number }}"/>{% endif %}{% endfor %}
 			{% endfor %}
 		</prompt>
 

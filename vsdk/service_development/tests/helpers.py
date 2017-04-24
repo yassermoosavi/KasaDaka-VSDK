@@ -56,7 +56,8 @@ def create_sample_voice_service(cls):
 
         cls.choice_element = Choice.objects.create(name="keus1",
                 description = "wauw wat een moeilijke keuze",
-                voice_label = cls.voice_label)
+                voice_label = cls.voice_label,
+                service = cls.voice_service)
         cls.voice_service._start_element = cls.choice_element
         cls.voice_service.save()
 
@@ -64,12 +65,14 @@ def create_sample_voice_service(cls):
                 description="option1 is awesome",
                 parent = cls.choice_element,
                 voice_label = cls.voice_label,
-                _redirect = cls.choice_element)
+                _redirect = cls.choice_element,
+                service = cls.voice_service)
         cls.choice_option2 = ChoiceOption.objects.create(name="option2",
                 description="option2 is awesome",
                 parent = cls.choice_element,
                 voice_label = cls.voice_label,
-                _redirect = cls.choice_element)
+                _redirect = cls.choice_element,
+                service = cls.voice_service)
         
         cls.choice_url = reverse('service-development:choice' ,
                 kwargs = {'session_id':cls.session.id,

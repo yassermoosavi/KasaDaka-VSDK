@@ -5,17 +5,11 @@
 		<prompt>
 			<audio src="{{ choice_voice_label }}"/>
 			{% for option_voice_label in choice_options_voice_labels %}
+				<audio src="{{ language.get_interface_voice_label_url_dict.pre_choice_option }}"/>
 				<audio src="{{ option_voice_label }}"/>
+				<audio src="{{ language.get_interface_voice_label_url_dict.post_choice_option }}"/>
+			{% for number in language.get_interface_numbers_voice_label_url_list %}{% if forloop.counter0 == forloop.parentloop.counter %}<audio src="{{ number }}"/>{% endif %}{% endfor %}
 			{% endfor %}
-
-			 {% comment %}<audio src="{{ interfaceAudioDir ~ "preoption.wav" }}"/>
-    {#option#}
-    <audio src="{{ option[1] }}"/>
-    {#press#}
-    <audio src="{{ interfaceAudioDir ~ "postoption.wav" }}"/>
-    {#number#}
-    <audio src="{{ interfaceAudioDir ~  loop.index ~ ".wav" }}"/>
-    {% endfor %}{% endcomment %}
 </prompt>
 
 {# all possible inputs from the user #}

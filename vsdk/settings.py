@@ -80,8 +80,8 @@ WSGI_APPLICATION = 'vsdk.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'db_name',
-        'USER': 'db_user',
+        'NAME': 'this is not a correct database',
+        'USER': 'this is not a corret user',
         'PASSWORD': 'this is not a correct password (probably)',
         'HOST': 'localhost',
         'PORT':'',
@@ -113,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Amsterdam'
 
 USE_I18N = True
 

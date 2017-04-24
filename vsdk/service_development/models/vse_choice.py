@@ -1,6 +1,6 @@
 from django.db import models
 
-from .vs_element import VoiceServiceElement
+from .vs_element import VoiceServiceElement, VoiceServiceSubElement
 
 class Choice(VoiceServiceElement):
     _urls_name = 'service-development:choice'
@@ -13,31 +13,27 @@ class Choice(VoiceServiceElement):
     is_valid.boolean = True
 
     def validator(self):
-        #TODO: check all children (choice options)
+        errors = []
+        errors.extend(super(Choice, self).validator())
+
+        choice_options = self.choice_options.all()
+        for choice_option in choice_options:
+            if choice_option._redirect and choice_option._redirect.id == self.id:
+                errors.append('!!!! There is a loop in %s'%str(choice_option))
+            else:
+                errors.extend(choice_option.validator())
         
-        if self.voice_label:
-            return self.voice_label.validator()
-        else:
-            return ['No VoiceLabel in element: "%s"'%self.name]  
+        return errors
 
 
-    #def get_absolute_url(self, **kwargs):
-    #    """
-    #    Give the URL to reach this Choice, arguments must match those in urls.py
-    #    """
-    #    return reverse('service_development:choice')
-    #    return reverse('service_development:choice', kwargs= {'element_id':'str(self.id)'})
-
-class ChoiceOption(VoiceServiceElement):
+class ChoiceOption(VoiceServiceSubElement):
     parent = models.ForeignKey(
             Choice,
-            #TODO: controlerne of dit wel echt cascade moet zijn???
             on_delete = models.CASCADE,
             related_name='choice_options')
     _redirect = models.ForeignKey(
             VoiceServiceElement, 
-            #TODO: controlerne of dit wel echt cascade moet zijn???
-            on_delete = models.CASCADE,
+            on_delete = models.SET_NULL,
             related_name='%(app_label)s_%(class)s_redirect_related',
             blank = True,
             null = True)
@@ -60,18 +56,12 @@ class ChoiceOption(VoiceServiceElement):
 
     def validator(self):
         errors = []
-        #check if voice label is present
-        if self.voice_label:
-            errors.extend(self.voice_label.validator())
-        else:
-            errors.append('No VoiceLabel in choice option: "%s"'%self.name)
-
+        errors.extend(super(ChoiceOption, self).validator())
         #check if redirect is present
         if not self._redirect:
-            errors.append('No redirect in choice option: "%s"'%self.name)
-        #check whether element that will be redirected to is appointed to the same voice service
-        #elif not self.redirect in self.service.get_elements():
-        #    errors.append('Redirect "%s" in choice option "%s" does not belong to same voice service'% (self.redirect.name, self.name))
+            errors.append('No redirect in choice option: "%s"'%str(self))
+        else:
+            errors.extend(self.redirect.validator())
 
         return errors
 

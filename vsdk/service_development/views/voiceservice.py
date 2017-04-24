@@ -16,13 +16,15 @@ def get_caller_id_from_GET_request(request):
 
 def voice_service_start(request, voice_service_id, session_id = None):
     """
-    Resolves the user, else redirects to user registration VoiceXML.
-    Creates a new session, then redirects to the first element of the service. 
+    Starting point for a voice service. Looks up user (redirects to registation
+    otherwise), creates session, (redirects to language selection).
+    If all requirements are fulfilled, redirects to the starting element of the
+    voice service.
     """
     voice_service = get_object_or_404(VoiceService, pk=voice_service_id)
 
     if not voice_service.active:
-        # TODO make a nice error message
+        # TODO give a nicer error message
         raise Http404()
 
     caller_id = get_caller_id_from_GET_request(request) 

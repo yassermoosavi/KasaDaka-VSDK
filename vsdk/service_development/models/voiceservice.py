@@ -4,7 +4,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-
+from django.urls.exceptions import NoReverseMatch
 
 
 from .voicelabel import VoiceLabel, Language, VoiceFragment
@@ -14,7 +14,7 @@ class VoiceService(models.Model):
     _urls_name = 'service-development:voice-service'
 
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=10)
+    description = models.CharField(max_length=1000)
     creation_date = models.DateTimeField('date created', auto_now_add = True)
     modification_date = models.DateTimeField('date last modified', auto_now = True)
     active = models.BooleanField('Voice service active',
@@ -42,16 +42,14 @@ class VoiceService(models.Model):
         """
         Returns True if this service supports a single language
         """
-        if len(self.supported_languages.all()) == 1:
-            return True
-        else:
-            return False
-
+        return len(self.supported_languages.all()) == 1
 
     def get_vxml_url(self):
-        return reverse(self._urls_name, kwargs ={'voice_service_id': self.id})
+        try:
+            return reverse(self._urls_name, kwargs ={'voice_service_id': self.id})
+        except NoReverseMatch:
+            return "unknown"
     get_vxml_url.short_description = "VoiceXML endpoint URL"
-    get_vxml_url.description = "The URL that can be set in a VoiceXML Browser to access this voice service."
     vxml_url = property(get_vxml_url)
     
     def __str__(self):

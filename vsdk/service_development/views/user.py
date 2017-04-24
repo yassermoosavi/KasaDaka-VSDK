@@ -16,13 +16,9 @@ def user_registration_form(request, session, caller_id):
     
     #get all supported languages
     languages = session.service.supported_languages.all()
-    language_voice_labels = []
-    for language in languages:
-        language_voice_labels.append(language.voice_label.get_voice_fragment_url(language))
     pass_on_variables = {'session_id':session.id,
             'caller_id':caller_id}
     context = {'languages':languages,
-            'language_voice_labels': language_voice_labels,
             'pass_on_variables': pass_on_variables,
             'redirect_url': reverse('service-development:user-registration'),
             }

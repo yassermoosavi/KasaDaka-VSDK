@@ -11,14 +11,17 @@ from . import Language
 class CallSession(models.Model):
     start = models.DateTimeField(auto_now_add = True)
     #TODO: make some kind of handler when the Asterisk connection is closed, to officially end the session.
-    end = models.DateTimeField(auto_now = True)
+    end = models.DateTimeField(null = True, blank = True)
     user = models.ForeignKey(KasaDakaUser, on_delete = models.PROTECT, null = True, blank = True)
     caller_id = models.CharField(max_length = 100, blank = True, null = True)
     service = models.ForeignKey(VoiceService, on_delete = models.SET_NULL, null = True)
     _language = models.ForeignKey(Language,on_delete = models.SET_NULL, null = True)
 
     def __str__(self):
-        return "%s (%s)" % (str(self.user), str(self.start))
+        from django.template import defaultfilters
+        start_date = defaultfilters.date(self.start, "SHORT_DATE_FORMAT")
+        start_time = defaultfilters.time(self.start, "TIME_FORMAT")
+        return "%s (%s %s)" % (str(self.user), str(start_date), str(start_time))
 
     @property
     def language(self):
@@ -44,6 +47,8 @@ class CallSession(models.Model):
     
     def record_step(self, element):
         step = CallSessionStep(session = self, _visited_element = element)
+        self.end = timezone.now() 
+        self.save()
         step.save()
         return
 
@@ -58,7 +63,11 @@ class CallSessionStep(models.Model):
     _visited_element = models.ForeignKey(VoiceServiceElement, on_delete = models.SET_NULL, null = True)
 
     def __str__(self):
-        return "%s: %s -> %s" % (str(self.session), str(self.time), str(self.visited_element))
+        from django.template import defaultfilters
+        date = defaultfilters.date(self.time, "SHORT_DATE_FORMAT")
+        time = defaultfilters.time(self.time, "TIME_FORMAT")
+        datetime = date + " " + time
+        return "%s: @ %s -> %s" % (str(self.session), str(datetime), str(self.visited_element))
 
     @property
     def visited_element(self):
