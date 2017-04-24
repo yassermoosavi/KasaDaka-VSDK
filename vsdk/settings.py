@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+#from . import custom_storages
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,8 +28,8 @@ SECRET_KEY = 'tk2(l(00&kfe7j97j$dvgz&b6r!kk_zbse1(9w*eoc$bcwu773'
 ##########
 #Use True on your local PC, False on Heroku!!
 ########
-DEBUG = True
-#DEBUG = False
+#DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -37,6 +38,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'vsdk.service_development.apps.ServiceDevelopmentConfig',
+    'storages',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -145,9 +147,10 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 STATIC_ROOT = os.path.join(SITE_ROOT, 'staticfiles')
 STATICFILES_DIRS = (
   os.path.join(SITE_ROOT, 'static/'),
+  os.path.join(SITE_ROOT, 'uploads/'),
 )
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+MEDIA_ROOT = os.path.join(SITE_ROOT, 'uploads')
 MEDIA_URL = '/uploads/'
 
 
@@ -156,7 +159,22 @@ MEDIA_URL = '/uploads/'
 
 
 
+
 # Simplified static file serving.ALLOWED_HOSTS#
 # https://warehouse.python.org/project/whitenoise/
-
+FTP_PASS =  os.environ['FTP_PASS']
+FTP_DIR = os.environ['FTP_DIR']
+FTP_STORAGE_LOCATION = 'ftp://ict4d:' + FTP_PASS + '@ict4d2017.andrebaart.nl:21/'+ FTP_DIR +'/'
+STATICFILES_LOCATION = FTP_STORAGE_LOCATION + '/static/'
+MEDIAFILES_LOCATION = FTP_STORAGE_LOCATION + '/media/'
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+    STATIC_URL = "http://ict4d2017.andrebaart.nl:2017/django-static/django-files/static/"
+    MEDIA_URL = "http://ict4d2017.andrebaart.nl:2017/django-static/django-files/"
+
+    STATICFILES_STORAGE = 'vsdk.custom_storages.StaticStorage'
+    DEFAULT_FILE_STORAGE ='vsdk.custom_storages.MediaStorage' 
+
+
