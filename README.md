@@ -1,1 +1,1 @@
-# KasaDaka-VSDK
+# KasaDaka-Voice Service Development Kit
