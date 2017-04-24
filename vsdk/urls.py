@@ -24,3 +24,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^vxml/', include('vsdk.service_development.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if not settings.DEBUG:
+        urlpatterns += patterns('',
+                (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT, 'show_indexes': True, }),
+                (r'^static/(?P<path>*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),).
