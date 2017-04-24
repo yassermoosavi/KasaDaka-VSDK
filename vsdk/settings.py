@@ -23,8 +23,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'tk2(l(00&kfe7j97j$dvgz&b6r!kk_zbse1(9w*eoc$bcwu773'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
-DEBUG = False
+
+##########
+#Use True on your local PC, False on Heroku!!
+########
+DEBUG = True
+#DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -76,17 +80,27 @@ WSGI_APPLICATION = 'vsdk.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'this is not a correct database',
-        'USER': 'this is not a corret user',
-        'PASSWORD': 'this is not a correct password (probably)',
-        'HOST': 'localhost',
-        'PORT':'',
+if DEBUG:
+     DATABASES = {
+             'default': {
+                         'ENGINE': 'django.db.backends.sqlite3',
+                         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+                     }
+          }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'this is not a correct database',
+            'USER': 'this is not a corret user',
+            'PASSWORD': 'this is not a correct password (probably)',
+            'HOST': 'localhost',
+            'PORT':'',
+        }
     }
-}
+    import dj_database_url
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES['default'].update(db_from_env)
 
 
 # Password validation
@@ -140,9 +154,7 @@ MEDIA_URL = '/uploads/'
 # Update database configuration with $DATABASE_URL.ALLOWED_HOSTSimport
 # dj_database_url
 
-import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
+
 
 # Simplified static file serving.ALLOWED_HOSTS#
 # https://warehouse.python.org/project/whitenoise/
