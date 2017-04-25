@@ -12,7 +12,7 @@ class CallSession(models.Model):
     start = models.DateTimeField(auto_now_add = True)
     #TODO: make some kind of handler when the Asterisk connection is closed, to officially end the session.
     end = models.DateTimeField(null = True, blank = True)
-    user = models.ForeignKey(KasaDakaUser, on_delete = models.PROTECT, null = True, blank = True)
+    user = models.ForeignKey(KasaDakaUser, on_delete = models.SET_NULL, null = True, blank = True)
     caller_id = models.CharField(max_length = 100, blank = True, null = True)
     service = models.ForeignKey(VoiceService, on_delete = models.SET_NULL, null = True)
     _language = models.ForeignKey(Language,on_delete = models.SET_NULL, null = True)
@@ -59,7 +59,7 @@ class CallSession(models.Model):
 
 class CallSessionStep(models.Model):
     time = models.DateTimeField(auto_now_add = True)
-    session = models.ForeignKey(CallSession, on_delete = models.PROTECT, related_name = "steps")
+    session = models.ForeignKey(CallSession, on_delete = models.CASCADE, related_name = "steps")
     _visited_element = models.ForeignKey(VoiceServiceElement, on_delete = models.SET_NULL, null = True)
 
     def __str__(self):
