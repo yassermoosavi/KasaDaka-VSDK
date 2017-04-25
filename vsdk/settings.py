@@ -162,8 +162,12 @@ MEDIA_URL = '/uploads/'
 
 # Simplified static file serving.ALLOWED_HOSTS#
 # https://warehouse.python.org/project/whitenoise/
-FTP_PASS =  os.environ['FTP_PASS']
-FTP_DIR = os.environ['FTP_DIR']
+try:
+    FTP_PASS =  os.environ['FTP_PASS']
+    FTP_DIR = os.environ['FTP_DIR']
+except KeyError:
+    FTP_PASS = ""
+    FTP_DIR = ""
 FTP_STORAGE_LOCATION = 'ftp://ict4d:' + FTP_PASS + '@ict4d2017.andrebaart.nl:21/'+ FTP_DIR +'/'
 STATICFILES_LOCATION = FTP_STORAGE_LOCATION + '/static/'
 MEDIAFILES_LOCATION = FTP_STORAGE_LOCATION + '/media/'
@@ -175,6 +179,6 @@ if not DEBUG:
     MEDIA_URL = "http://ict4d2017.andrebaart.nl:2017/django-static/django-files/"
 
     STATICFILES_STORAGE = 'vsdk.custom_storages.StaticStorage'
-    DEFAULT_FILE_STORAGE ='vsdk.custom_storages.MediaStorage' 
+    DEFAULT_FILE_STORAGE ='vsdk.custom_storages.MediaStorage'
 
 
