@@ -168,15 +168,15 @@ try:
 except KeyError:
     FTP_PASS = ""
     FTP_DIR = ""
-FTP_STORAGE_LOCATION = 'ftp://ict4d:' + FTP_PASS + '@ict4d2017.andrebaart.nl:21/'+ FTP_DIR +'/'
+FTP_STORAGE_LOCATION = 'ftp://ict4d:' + FTP_PASS + '@ict4d-vps.andrebaart.nl:21/'+ FTP_DIR +'/'
 STATICFILES_LOCATION = FTP_STORAGE_LOCATION + '/static/'
 MEDIAFILES_LOCATION = FTP_STORAGE_LOCATION + '/media/'
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-    STATIC_URL = "http://ict4d2017.andrebaart.nl:2017/django-static/django-files/static/"
-    MEDIA_URL = "http://ict4d2017.andrebaart.nl:2017/django-static/django-files/"
+    STATIC_URL = "http://ict4d-vps.andrebaart.nl:2017/django-static/django-files/static/"
+    MEDIA_URL = "http://ict4d-vps.andrebaart.nl:2017/django-static/django-files/"
 
     STATICFILES_STORAGE = 'vsdk.custom_storages.StaticStorage'
     DEFAULT_FILE_STORAGE ='vsdk.custom_storages.MediaStorage'
