@@ -14,7 +14,7 @@ class VoiceLabel(models.Model):
 
     def validator(self, language):
         errors = []        
-        if len(self.voicefragment_set.all()) > 0:
+        if len(self.voicefragment_set.filter(language = language)) > 0:
             errors.extend(self.voicefragment_set.filter(language=language)[0].validator())
         else:
             errors.append('"%s" does not have a Voice Fragment for "%s"'%(str(self),str(language)))
