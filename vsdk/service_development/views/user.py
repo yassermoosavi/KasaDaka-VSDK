@@ -11,9 +11,8 @@ def user_registration_form(request, session, caller_id):
     Renders the user registration VoiceXML form.
     This form consists of:
     - Selecting the preferred language
-    - Speaking and recording of the name of the user
     """
-    
+
     #get all supported languages
     languages = session.service.supported_languages.all()
     pass_on_variables = {'session_id':session.id,
@@ -34,19 +33,19 @@ def user_registration(request):
         caller_id = request.POST['caller_id']
         session = get_object_or_404(CallSession, pk = request.POST['session_id'])
         language = get_object_or_404(Language, pk = request.POST['language_id'])
- 
+
         #register the user and link the session to the user
         user = KasaDakaUser(caller_id = caller_id,
                 language = language,
                 service = session.service)
         user.save()
         session.link_to_user(user)
-            
+
         #redirect back to start of voice service
         return redirect('service-development:voice-service',
                 voice_service_id = session.service.id,
                 session_id = session.id)
-            
+
     #If GET and caller_id and session_id are provided, present registration VoiceXML 'form'
     elif request.method == "GET" and set(('caller_id', 'session_id')) <= set(request.GET):
         session = get_object_or_404(CallSession, pk = request.GET['session_id'])
