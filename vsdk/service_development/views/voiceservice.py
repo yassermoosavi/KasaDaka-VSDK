@@ -30,22 +30,25 @@ def voice_service_start(request, voice_service_id, session_id = None):
     caller_id = get_caller_id_from_GET_request(request)
     session = lookup_or_create_session(voice_service, session_id, caller_id)
 
-    #If the session is not yet linked to an user, try to look up the user by
-    # Caller ID, and link it to the session
-    if not session.user:
+    # If the session is not yet linked to an user, try to look up the user by
+    # Caller ID, and link it to the session. If the user cannot be found,
+    # redirect to registration.
+    if caller_id and not session.user:
         found_user = lookup_kasadaka_user_by_caller_id(caller_id, session.service)
         if found_user:
             session.link_to_user(found_user)
 
         # If there is no user with this caller_id, redirect to registration
-        elif caller_id:
+        else:
             return base.redirect_add_get_parameters('service-development:user-registration',
                     caller_id = caller_id,
                     session_id = session.id)
-        # There is no caller_id provided, but this is required for registration
-        elif voice_service.requires_registration:
-                # TODO make this into a nice audio error
-                raise ValueError('This service requires registration, but registration is not possible, because there is no callerID!')
+
+    # If there is no caller_id provided, but this is required for registration,
+    # throw an error
+    elif voice_service.requires_registration and not caller_id:
+        # TODO make this into a nice audio error
+        raise ValueError('This service requires registration, but registration is not possible, because there is no callerID!')
 
 
 
