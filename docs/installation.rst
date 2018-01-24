@@ -38,6 +38,6 @@ Note that this installation uses the default SQLite database implementation. For
 # Insert the default data (or a dump of the data for your application) into the database.
   - ``
 
-
+TODO: change secret key
 
 .. [1] https://kasadaka.com
