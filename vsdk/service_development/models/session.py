@@ -61,6 +61,7 @@ class CallSessionStep(models.Model):
     time = models.DateTimeField(auto_now_add = True)
     session = models.ForeignKey(CallSession, on_delete = models.CASCADE, related_name = "steps")
     _visited_element = models.ForeignKey(VoiceServiceElement, on_delete = models.SET_NULL, null = True)
+    description = models.CharField(max_length = 1000,blank = True, null = True)
 
     def __str__(self):
         from django.template import defaultfilters

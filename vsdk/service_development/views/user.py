@@ -54,7 +54,7 @@ class KasaDakaUserRegistration(TemplateView):
         if set(('caller_id', 'session_id')) <= set(request.GET):
             session = get_object_or_404(CallSession, pk = request.GET['session_id'])
             caller_id = request.GET['caller_id']
-            return user_registration_form(request, session, caller_id)
+            return self.user_registration_form(request, session, caller_id)
 
 
         #If incorrect GET/POST parameters are provided, raise error

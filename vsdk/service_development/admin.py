@@ -62,8 +62,8 @@ class CallSessionInline(admin.TabularInline):
     extra = 0 
     fk_name = 'session'
     can_delete = False
-    fieldsets = [('General', {'fields' : ['visited_element', 'time']})]
-    readonly_fields = ('time','session','visited_element')
+    fieldsets = [('General', {'fields' : ['visited_element', 'time', 'description']})]
+    readonly_fields = ('time','session','visited_element', 'description')
     max_num = 0
 
 class CallSessionAdmin(admin.ModelAdmin):
