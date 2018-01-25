@@ -24,7 +24,10 @@ class VoiceService(models.Model):
             related_name='%(app_label)s_%(class)s_related',
             null = True,
             blank = True)
-    requires_registration = models.BooleanField('Requires user registration')
+    registration_choices = [('required', 'User registration required (service does not function without Caller ID!)'),
+                            ('preferred', 'User registration preferred'),
+                            ('disabled', 'User registration disabled')]
+    registration = models.CharField('User registration',max_length = 15, blank = False, choices = registration_choices)
 
     supported_languages = models.ManyToManyField(Language, blank = True)
 
@@ -40,10 +43,25 @@ class VoiceService(models.Model):
     @property
     def supports_single_language(self):
         """
-        Returns True if this service supports a single language
+        Returns True if this service supports only a single language
         """
         return len(self.supported_languages.all()) == 1
 
+    @property
+    def registration_required(self):
+        "Returns True if user registration is required"
+        return self.registration == 'required'
+
+    @property
+    def registration_preferred_or_required(self):
+        "Returns True if user registration is preferred or required"
+        return (self.registration == 'preferred' or self.registration == 'required')
+
+    @property
+    def registration_disabled(self):
+        "Returns True if user registration is disabled"
+        return self.registration == 'disabled'
+    
     def get_vxml_url(self):
         try:
             return reverse(self._urls_name, kwargs ={'voice_service_id': self.id})
