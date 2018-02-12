@@ -22,3 +22,12 @@ def redirect_add_get_parameters(url_name, *args, **kwargs):
     params = urllib.parse.urlencode(kwargs)
     return HttpResponseRedirect(url + "?%s" % params)
 
+def reverse_add_get_parameters(url_name, *args, **kwargs):
+    """
+    Like Django's reverse(), but adds GET parameters at the end of the URL.
+    """
+    from django.core.urlresolvers import reverse 
+    import urllib
+    url = reverse(url_name, args = args)
+    params = urllib.parse.urlencode(kwargs)
+    return url + "?%s" % params

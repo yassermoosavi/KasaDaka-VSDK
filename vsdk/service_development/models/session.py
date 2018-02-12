@@ -21,7 +21,10 @@ class CallSession(models.Model):
         from django.template import defaultfilters
         start_date = defaultfilters.date(self.start, "SHORT_DATE_FORMAT")
         start_time = defaultfilters.time(self.start, "TIME_FORMAT")
-        return "%s (%s %s)" % (str(self.user), str(start_date), str(start_time))
+        if self.user:
+            return "%s (%s %s)" % (str(self.user), str(start_date), str(start_time))
+        else:
+            return "%s (%s %s)" % (str(self.caller_id), str(start_date), str(start_time))
 
     @property
     def language(self):
@@ -45,8 +48,8 @@ class CallSession(models.Model):
         self.save()
         return self._language
     
-    def record_step(self, element):
-        step = CallSessionStep(session = self, _visited_element = element)
+    def record_step(self, element = None, description = None):
+        step = CallSessionStep(session = self, _visited_element = element, description = description)
         self.end = timezone.now() 
         self.save()
         step.save()
@@ -61,13 +64,19 @@ class CallSessionStep(models.Model):
     time = models.DateTimeField(auto_now_add = True)
     session = models.ForeignKey(CallSession, on_delete = models.CASCADE, related_name = "steps")
     _visited_element = models.ForeignKey(VoiceServiceElement, on_delete = models.SET_NULL, null = True)
+    description = models.CharField(max_length = 1000,blank = True, null = True)
 
     def __str__(self):
         from django.template import defaultfilters
         date = defaultfilters.date(self.time, "SHORT_DATE_FORMAT")
         time = defaultfilters.time(self.time, "TIME_FORMAT")
         datetime = date + " " + time
-        return "%s: @ %s -> %s" % (str(self.session), str(datetime), str(self.visited_element))
+        if self.visited_element:
+            return "%s: @ %s -> %s" % (str(self.session), str(datetime), str(self.visited_element))
+        elif self.description:
+            return "%s: @ %s -> %s" % (str(self.session), str(datetime), str(self.description))
+        else:
+            return "%s: @ %s" % (str(self.session), str(datetime))
 
     @property
     def visited_element(self):
@@ -76,7 +85,9 @@ class CallSessionStep(models.Model):
         instead of the VoiceServiceElement superclass object (which does
         not have specific fields and methods).
         """
-        return VoiceServiceElement.objects.get_subclass(id = self._visited_element.id)
+        if self._visited_element:
+            return VoiceServiceElement.objects.get_subclass(id = self._visited_element.id)
+        else: return None
 
 
 def lookup_or_create_session(voice_service, session_id=None, caller_id = None):

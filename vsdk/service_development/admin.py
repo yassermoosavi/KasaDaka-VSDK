@@ -11,7 +11,7 @@ def format_validation_result(obj):
 
 class VoiceServiceAdmin(admin.ModelAdmin):
     fieldsets = [('General',    {'fields' : ['name', 'description', 'vxml_url', 'active', 'is_valid', 'validation_details', 'supported_languages']}),
-                    ('Requirements', {'fields': ['requires_registration']}),
+                    ('Registration process', {'fields': ['registration', 'registration_language', 'registration_name']}),
                     ('Call flow', {'fields': ['_start_element']})]
     list_display = ('name','active','is_valid')
     readonly_fields = ('vxml_url', 'is_valid', 'validation_details')
@@ -62,8 +62,8 @@ class CallSessionInline(admin.TabularInline):
     extra = 0 
     fk_name = 'session'
     can_delete = False
-    fieldsets = [('General', {'fields' : ['visited_element', 'time']})]
-    readonly_fields = ('time','session','visited_element')
+    fieldsets = [('General', {'fields' : ['visited_element', 'time', 'description']})]
+    readonly_fields = ('time','session','visited_element', 'description')
     max_num = 0
 
 class CallSessionAdmin(admin.ModelAdmin):
