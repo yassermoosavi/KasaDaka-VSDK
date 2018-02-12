@@ -1,5 +1,6 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 
 from ..models import VoiceService, lookup_or_create_session, lookup_kasadaka_user_by_caller_id
 
@@ -29,6 +30,7 @@ def voice_service_start(request, voice_service_id, session_id = None):
 
     caller_id = get_caller_id_from_GET_request(request)
     session = lookup_or_create_session(voice_service, session_id, caller_id)
+    session_id = session.id
 
     # If the session is not yet linked to an user, try to look up the user by
     # Caller ID, and link it to the session. If the user cannot be found,
@@ -40,9 +42,8 @@ def voice_service_start(request, voice_service_id, session_id = None):
 
         # If there is no user with this caller_id and registration of users is preferred or required, redirect to registration
         elif voice_service.registration_preferred_or_required:
-            return base.redirect_add_get_parameters('service-development:user-registration',
-                    caller_id = caller_id,
-                    session_id = session.id)
+            return redirect('service-development:user-registration',
+                    session.id)
 
     # If there is no caller_id provided, and user registration is required for this service,
     # throw an error
@@ -55,9 +56,11 @@ def voice_service_start(request, voice_service_id, session_id = None):
     # If the language for this session can not be determined,
     # redirect the user to language selection for this session only.
     if not session.language:
-        return redirect('service-development:language-selection',
-                        voice_service_id = voice_service.id,
-                        session_id = session.id)
+        # After selection of language, return to start of voice service.
+        return_url = reverse('service-development:voice-service', args = [session.service.id,session.id])
+        return base.redirect_add_get_parameters('service-development:language-selection',
+                        session.id,
+                        redirect_url = return_url)
 
     return base.redirect_to_voice_service_element(voice_service.start_element, session)
 

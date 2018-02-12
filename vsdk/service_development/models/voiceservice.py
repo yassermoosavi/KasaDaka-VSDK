@@ -24,10 +24,12 @@ class VoiceService(models.Model):
             related_name='%(app_label)s_%(class)s_related',
             null = True,
             blank = True)
-    registration_choices = [('required', 'User registration required (service does not function without Caller ID!)'),
-                            ('preferred', 'User registration preferred'),
-                            ('disabled', 'User registration disabled')]
+    registration_choices = [('required', 'required (service does not function without Caller ID!)'),
+                            ('preferred', 'preferred'),
+                            ('disabled', 'disabled')]
     registration = models.CharField('User registration',max_length = 15, blank = False, choices = registration_choices)
+    registration_language = models.BooleanField('Register Language preference', help_text= "The preferred language will be asked and stored during the user registration process", default = True)
+    registration_name = models.BooleanField('Register spoken name', help_text = "The user will be asked to speak their name as part of the user registration process", default = False)
 
     supported_languages = models.ManyToManyField(Language, blank = True)
 

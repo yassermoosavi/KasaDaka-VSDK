@@ -12,7 +12,7 @@ class KasaDakaUser(models.Model):
     """
     User that belongs to a Voice Service on this system
     """
-    caller_id = models.CharField('phone number',max_length=100)
+    caller_id = models.CharField('phone number',max_length=100, unique = True)
     #phone_number = PhoneNumberField()
     first_name = models.CharField('first name', max_length = 100, blank = True)
     last_name = models.CharField('last name', max_length=100, blank = True)

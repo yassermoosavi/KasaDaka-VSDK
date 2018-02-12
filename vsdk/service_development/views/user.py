@@ -2,62 +2,57 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404, redirec
 from django.urls import reverse
 from django.views.generic import TemplateView
 
-from ..models import KasaDakaUser, CallSession
+from ..models import KasaDakaUser, CallSession, Language
 
-from ..models import Language
+from . import base
 
 class KasaDakaUserRegistration(TemplateView):
 
-    def user_registration_form(self, request, session, caller_id):
+    def create_new_user(self, request, session):
         """
-        Renders the user registration VoiceXML form.
-        This form consists of:
-        - Selecting the preferred language
+        After all required elements of the registration process
+        have been filled, this function creates the user.
+        After registration the user is redirected back to the start
+        of the voice service.
         """
+        caller_id = session.caller_id
+        #register the user and link the session to the user
+        user = KasaDakaUser(caller_id = caller_id,
+                service = session.service)
+        if session.service.registration_language:
+            user.language = session.language
+        #if session.service.registration_name:
+        #    pass
 
-        #get all supported languages
-        languages = session.service.supported_languages.all()
-        pass_on_variables = {'session_id':session.id,
-                'caller_id':caller_id}
-        context = {'languages':languages,
-                'pass_on_variables': pass_on_variables,
-                'redirect_url': reverse('service-development:user-registration'),
-                }
-        return render(request, 'user_registration.xml', context, content_type='text/xml')
+        user.save()
+        session.link_to_user(user)
 
-    def post(self, request):
+        session.record_step(None, "Registered as user: %s" % str(user))
+        return
+
+    def user_registration_process(self, request, session):
         """
-        Registers the user to the system (POST), or provides the registration 'form' (GET).
+        This function redirects to the set elements of the user registration
+        process, and redirects to the final registration when all elements have
+        been filled.
         """
-        #If POST and all required elements for user registration are filled
-        if set(('caller_id','session_id','language_id')) <= set(request.POST):
-            caller_id = request.POST['caller_id']
-            session = get_object_or_404(CallSession, pk = request.POST['session_id'])
-            language = get_object_or_404(Language, pk = request.POST['language_id'])
+        # Always redirect back to registration process
+        redirect_url = reverse('service-development:user-registration', args =[session.id])
+        if session.service.registration_language and session.language == None:
+            return base.redirect_add_get_parameters('service-development:language-selection', session.id,
+                    redirect_url = redirect_url)
+        
+        #TODO: dit verder uitwerken, user bestaat natuurlijk nog niet dus daar kun je niet checken. 
+        #if 'name' in session.service.registration_elements and session.user.name_voice == None:
+            # go to user name voice prompt
+        #    pass
 
-            #register the user and link the session to the user
-            user = KasaDakaUser(caller_id = caller_id,
-                    language = language,
-                    service = session.service)
-            user.save()
-            session.link_to_user(user)
+        # If all required elements are present, finalize registration by creating a new user
+        self.create_new_user(request, session)
 
-            #redirect back to start of voice service
-            return redirect('service-development:voice-service',
-                    voice_service_id = session.service.id,
-                     session_id = session.id)
-        else:
-            raise ValueError('Incorrect request: Caller ID and/or Session ID and/or language ID not set, required for registration of user')
+        # Return to start of voice service
+        return redirect('service-development:voice-service', voice_service_id = session.service.id, session_id = session.id)
 
-    def get(self, request):
-        #If GET and caller_id and session_id are provided, present registration VoiceXML 'form'
-        if set(('caller_id', 'session_id')) <= set(request.GET):
-            session = get_object_or_404(CallSession, pk = request.GET['session_id'])
-            caller_id = request.GET['caller_id']
-            return self.user_registration_form(request, session, caller_id)
-
-
-        #If incorrect GET/POST parameters are provided, raise error
-        else:
-            raise ValueError('Incorrect request: Caller ID and/or Session ID not set, required for registration form')
-
+    def get(self, request, session_id):
+        session = get_object_or_404(CallSession, pk = session_id)
+        return self.user_registration_process(request, session)

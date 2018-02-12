@@ -11,7 +11,7 @@ def format_validation_result(obj):
 
 class VoiceServiceAdmin(admin.ModelAdmin):
     fieldsets = [('General',    {'fields' : ['name', 'description', 'vxml_url', 'active', 'is_valid', 'validation_details', 'supported_languages']}),
-                    ('Requirements', {'fields': ['registration']}),
+                    ('Registration process', {'fields': ['registration', 'registration_language', 'registration_name']}),
                     ('Call flow', {'fields': ['_start_element']})]
     list_display = ('name','active','is_valid')
     readonly_fields = ('vxml_url', 'is_valid', 'validation_details')
