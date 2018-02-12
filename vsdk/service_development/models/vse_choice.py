@@ -15,14 +15,12 @@ class Choice(VoiceServiceElement):
     def validator(self):
         errors = []
         errors.extend(super(Choice, self).validator())
-
         choice_options = self.choice_options.all()
         for choice_option in choice_options:
-            if choice_option._redirect and choice_option._redirect.id == self.id:
-                errors.append('!!!! There is a loop in %s'%str(choice_option))
-            else:
-                errors.extend(choice_option.validator())
-        
+            errors.extend(choice_option.validator())
+
+        #deduplicate errors
+        errors = list(set(errors))
         return errors
 
 
@@ -45,7 +43,7 @@ class ChoiceOption(VoiceServiceSubElement):
         instead of the VoiceServiceElement superclass object (which does
         not have specific fields and methods).
         """
-        return VoiceServiceElement.objects.get_subclass(id = self._redirect.id)
+        return VoiceServiceSubElement.objects.get_subclass(id = self._redirect.id)
 
     def __str__(self):
         return "(%s): %s" % (self.parent.name,self.name)
@@ -61,7 +59,10 @@ class ChoiceOption(VoiceServiceSubElement):
         if not self._redirect:
             errors.append('No redirect in choice option: "%s"'%str(self))
         else:
-            errors.extend(self.redirect.validator())
+            if self.service.id != self.parent.service.id:
+                errors.append('Choice option "%s" not in correct (same) Voice Service as Choice element! ("%s", should be "%s")'%(str(self),str(self.service),str(self.parent.service)))
+            if self.redirect.service.id != self.parent.service.id:
+                errors.append('Redirect element of choice option "%s" not in correct (same) Voice Service! ("%s", should be "%s")'%(str(self),str(self.redirect.service),str(self.service)))
 
         return errors
 

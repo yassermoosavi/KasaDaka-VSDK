@@ -84,11 +84,13 @@ class VoiceService(models.Model):
         if not self._start_element:
             errors.append('No starting element')
         else:
-            errors.extend(self.start_element.validator())
+            associated_elements = self.voiceservicesubelement_set.all()
+            for sub_element in associated_elements:
+                errors.extend(sub_element.get_subclass_object().validator())
         if len(self.supported_languages.all()) == 0:
             errors.append('No supported languages')
+
+        #deduplicate errors
+        errors = list(set(errors))
         return errors
 
-    def get_elements(self):
-        #TODO
-        return []

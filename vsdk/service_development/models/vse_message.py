@@ -42,8 +42,7 @@ class MessagePresentation(VoiceServiceElement):
             errors.append('Message %s does not have a redirect element and is not a final element'%self.name)
         elif not self.final_element:
             if self._redirect.id == self.id:
-                errors.append('!!!! There is a loop in %s'%str(self))
-            else:
-                errors.extend(self._redirect.validator())
+                errors.append('There is a loop in %s'%str(self))
+
 
         return errors

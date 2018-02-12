@@ -57,6 +57,9 @@ class VoiceServiceSubElement(models.Model):
         """
         return self.voice_label.get_voice_fragment_url(language)
 
+    def get_subclass_object(self):
+        return VoiceServiceSubElement.objects.get_subclass(id = self.id)
+
 
 class VoiceServiceElement(VoiceServiceSubElement):
     """
