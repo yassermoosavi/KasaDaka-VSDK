@@ -85,7 +85,7 @@ class VoiceLabelByVoiceServicesFilter(admin.SimpleListFilter):
         provided in the query string and retrievable via
         `self.value()`.
         """
-        return VoiceLabel.objects.filter(voiceservicesubelement__service__id=self.value())
+        return VoiceLabel.objects.filter(voiceservicesubelement__service__id=self.value()).distinct()
 
 class VoiceLabelAdmin(admin.ModelAdmin):
     list_display = ['name']
