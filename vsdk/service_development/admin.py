@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.translation import gettext as _
 
 
-from .models import VoiceService, MessagePresentation, Choice, ChoiceOption, VoiceFragment, CallSession, CallSessionStep, KasaDakaUser, Language, VoiceLabel
+from .models import *
 
 def format_validation_result(obj):
         """
@@ -115,7 +115,7 @@ class CallSessionAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
-    def has_delete_permission(self, reques, obj=None):
+    def has_delete_permission(self, request, obj=None):
         return False
 
     def get_actions(self, request):
@@ -140,3 +140,6 @@ admin.site.register(CallSession, CallSessionAdmin)
 admin.site.register(KasaDakaUser, KasaDakaUserAdmin)
 admin.site.register(Language)
 admin.site.register(VoiceLabel, VoiceLabelAdmin)
+admin.site.register(SpokenUserInput)
+admin.site.register(UserInputCategory)
+admin.site.register(Record)
