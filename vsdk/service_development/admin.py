@@ -56,6 +56,11 @@ class VoiceLabelInline(admin.TabularInline):
     model = VoiceFragment
     extra = 2
     fk_name = 'parent'
+    fieldsets = [('General',    {'fields' : [ 'language', 'audio', 'audio_file_player']})]
+    readonly_fields = ('audio_file_player',)
+
+
+
 
 class VoiceLabelByVoiceServicesFilter(admin.SimpleListFilter):
     # Human-readable title which will be displayed in the
@@ -141,10 +146,6 @@ class SpokenUserInputAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
-    def audio_file_player(self, obj):
-        return obj.audio_file_player()
-    audio_file_player.allow_tags = True
-    audio_file_player.short_description = 'Audio Player'
 
 
 # Register your models here.
