@@ -131,6 +131,22 @@ class KasaDakaUserAdmin(admin.ModelAdmin):
     list_filter = ['service','language','caller_id']
     list_display = ('__str__','caller_id', 'service', 'language')
 
+class SpokenUserInputAdmin(admin.ModelAdmin):
+    list_display = ('__str__','category','description','audio_file_player')
+    list_filter = ('category',)
+    fieldsets = [('General', {'fields' : ['audio', 'audio_file_player', 'session','category','description']})]
+    readonly_fields = ('audio','session','category', 'audio_file_player') 
+    can_delete = True
+
+    def has_add_permission(self, request):
+        return False
+
+    def audio_file_player(self, obj):
+        return obj.audio_file_player()
+    audio_file_player.allow_tags = True
+    audio_file_player.short_description = 'Audio Player'
+
+
 # Register your models here.
 
 admin.site.register(VoiceService, VoiceServiceAdmin)
@@ -140,6 +156,6 @@ admin.site.register(CallSession, CallSessionAdmin)
 admin.site.register(KasaDakaUser, KasaDakaUserAdmin)
 admin.site.register(Language)
 admin.site.register(VoiceLabel, VoiceLabelAdmin)
-admin.site.register(SpokenUserInput)
+admin.site.register(SpokenUserInput, SpokenUserInputAdmin)
 admin.site.register(UserInputCategory)
 admin.site.register(Record)

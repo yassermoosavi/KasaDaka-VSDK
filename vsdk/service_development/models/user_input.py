@@ -1,4 +1,7 @@
 from django.db import models
+from django.conf import settings
+
+from django.utils import timezone
 from . import CallSession, VoiceService
 
 
@@ -21,9 +24,21 @@ class SpokenUserInput(models.Model):
 
 
     def __str__(self):
-        return 'Spoken User Input: "%s" @ "%s" by "%s" ("%s")'%(self.category.name, str(self.time), str(self.session.caller_id), self.session.service.name)
+        from django.template import defaultfilters
+        date = defaultfilters.date(self.time, "SHORT_DATE_FORMAT")
+        time = defaultfilters.time(self.time, "TIME_FORMAT")
+        return 'Spoken User Input: %s @ %s %s by %s (%s)'%(self.category.name, str(date), str(time), str(self.session.caller_id), self.session.service.name)
 
 
+    def audio_file_player(self):
+        """audio player tag for admin"""
+        if self.audio:
+            file_url = settings.MEDIA_URL + str(self.audio)
+            player_string = '<audio src="%s" controls>Your browser does not support the audio element.</audio>' % (file_url)
+            return player_string
+
+    audio_file_player.allow_tags = True
+    audio_file_player.short_description = ('Audio file player')
 
 
 
