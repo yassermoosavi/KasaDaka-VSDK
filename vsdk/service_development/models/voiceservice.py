@@ -38,30 +38,35 @@ class VoiceService(models.Model):
     class Meta:
         verbose_name = _('Voice Service')
     
-    def start_element(self):
+    def _get_start_element(self):
         """
         Returns the actual subclassed object that is redirected to,
         instead of the VoiceServiceElement superclass object (which does
         not have specific fields and methods).
         """
         return VoiceServiceElement.objects.get_subclass(id = self._start_element.id)
-    start_element.short_description = _('Starting element')
+    _get_start_element.short_description = _('Starting element')
+    start_element = property(_get_start_element)
 
-    def supports_single_language(self):
+    def _supports_single_language(self):
         """
         Returns True if this service supports only a single language
         """
         return len(self.supported_languages.all()) == 1
-    supports_single_language.short_description = _('Supports only a single language')
+    _supports_single_language.short_description = _('Supports only a single language')
+    supports_single_language = property(_supports_single_language)
 
+    @property
     def registration_required(self):
         "Returns True if user registration is required"
         return self.registration == 'required'
 
+    @property
     def registration_preferred_or_required(self):
         "Returns True if user registration is preferred or required"
         return (self.registration == 'preferred' or self.registration == 'required')
 
+    @property
     def registration_disabled(self):
         "Returns True if user registration is disabled"
         return self.registration == 'disabled'
