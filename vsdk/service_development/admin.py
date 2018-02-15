@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.utils.translation import gettext as _
+from django.utils.translation import ugettext_lazy as _
 
 
 from .models import *
@@ -12,10 +12,10 @@ def format_validation_result(obj):
 
 
 class VoiceServiceAdmin(admin.ModelAdmin):
-    fieldsets = [('General',    {'fields' : ['name', 'description', 'vxml_url', 'active', 'is_valid', 'validation_details', 'supported_languages']}),
-                    ('Registration process', {'fields': ['registration', 'registration_language', 'registration_name']}),
-                    ('Call flow', {'fields': ['_start_element']})]
-    list_display = ('name','active','is_valid')
+    fieldsets = [(_('General'),    {'fields' : ['name', 'description', 'vxml_url', 'active', 'is_valid', 'validation_details', 'supported_languages']}),
+                    (_('Registration process'), {'fields': ['registration', 'registration_language', 'registration_name']}),
+                    (_('Call flow'), {'fields': ['_start_element']})]
+    list_display = ('name','active', 'is_valid')
     readonly_fields = ('vxml_url', 'is_valid', 'validation_details')
 
     def get_readonly_fields(self, request, obj=None):
@@ -31,10 +31,11 @@ class VoiceServiceAdmin(admin.ModelAdmin):
     def validation_details(self, obj=None):
         return format_validation_result(obj)
     validation_details.allow_tags = True
+    validation_details.short_description = _('Validation errors')
     
 
 class VoiceServiceElementAdmin(admin.ModelAdmin):
-    fieldsets = [('General',    {'fields' : [ 'name', 'description','service','is_valid', 'validation_details', 'voice_label']})]
+    fieldsets = [(_('General'),    {'fields' : [ 'name', 'description','service','is_valid', 'validation_details', 'voice_label']})]
     list_filter = ['service']
     list_display = ('name', 'service', 'is_valid')
     readonly_fields = ('is_valid', 'validation_details')
@@ -42,12 +43,15 @@ class VoiceServiceElementAdmin(admin.ModelAdmin):
     def validation_details(self, obj=None):
         return format_validation_result(obj)
     validation_details.allow_tags = True
+    validation_details.short_description = _('Validation errors')
 
 class ChoiceOptionsInline(admin.TabularInline):
     model = ChoiceOption
     extra = 2
     fk_name = 'parent'
     view_on_site = False
+    verbose_name = _('Possible choice')
+    verbose_name_plural = _('Possible choices')
 
 class ChoiceAdmin(VoiceServiceElementAdmin):
     inlines = [ChoiceOptionsInline]
@@ -56,7 +60,7 @@ class VoiceLabelInline(admin.TabularInline):
     model = VoiceFragment
     extra = 2
     fk_name = 'parent'
-    fieldsets = [('General',    {'fields' : [ 'language', 'audio', 'audio_file_player']})]
+    fieldsets = [(_('General'),    {'fields' : [ 'language', 'audio', 'audio_file_player']})]
     readonly_fields = ('audio_file_player',)
 
 
@@ -105,14 +109,14 @@ class CallSessionInline(admin.TabularInline):
     extra = 0 
     fk_name = 'session'
     can_delete = False
-    fieldsets = [('General', {'fields' : ['visited_element', 'time', 'description']})]
+    fieldsets = [(_('General'), {'fields' : ['visited_element', 'time', 'description']})]
     readonly_fields = ('time','session','visited_element', 'description')
     max_num = 0
 
 class CallSessionAdmin(admin.ModelAdmin):
     list_display = ('start','user','service','caller_id','language')
     list_filter = ('service','user','caller_id')
-    fieldsets = [('General', {'fields' : ['service', 'user','caller_id','start','end','language']})]
+    fieldsets = [(_('General'), {'fields' : ['service', 'user','caller_id','start','end','language']})]
     readonly_fields = ('service','user','caller_id','start','end','language') 
     inlines = [CallSessionInline]
     can_delete = False
@@ -130,7 +134,7 @@ class CallSessionAdmin(admin.ModelAdmin):
         return actions
 
 class MessagePresentationAdmin(VoiceServiceElementAdmin):
-    fieldsets = VoiceServiceElementAdmin.fieldsets + [('Message Presentation', {'fields': ['_redirect','final_element']})]
+    fieldsets = VoiceServiceElementAdmin.fieldsets + [(_('Message Presentation'), {'fields': ['_redirect','final_element']})]
 
 class KasaDakaUserAdmin(admin.ModelAdmin):
     list_filter = ['service','language','caller_id']
@@ -139,7 +143,7 @@ class KasaDakaUserAdmin(admin.ModelAdmin):
 class SpokenUserInputAdmin(admin.ModelAdmin):
     list_display = ('__str__','category','description','audio_file_player')
     list_filter = ('category',)
-    fieldsets = [('General', {'fields' : ['audio', 'audio_file_player', 'session','category','description']})]
+    fieldsets = [(_('General'), {'fields' : ['audio', 'audio_file_player', 'session','category','description']})]
     readonly_fields = ('audio','session','category', 'audio_file_player') 
     can_delete = True
 

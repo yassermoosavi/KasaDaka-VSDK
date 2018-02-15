@@ -1,0 +1,541 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: test\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-15 13:23+0100\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+
+#: service_development/admin.py:15 service_development/admin.py:38
+#: service_development/admin.py:63 service_development/admin.py:112
+#: service_development/admin.py:119 service_development/admin.py:146
+msgid "General"
+msgstr "Général"
+
+#: service_development/admin.py:16
+msgid "Registration process"
+msgstr "Processus d'inscription"
+
+#: service_development/admin.py:17
+msgid "Call flow"
+msgstr "Flux d'appels"
+
+#: service_development/admin.py:34 service_development/admin.py:46
+msgid "Validation errors"
+msgstr "Erreurs de validation"
+
+#: service_development/admin.py:53
+msgid "Possible choice"
+msgstr "Choix possible"
+
+#: service_development/admin.py:54
+msgid "Possible choices"
+msgstr "Choix possibles"
+
+#: service_development/admin.py:72
+#: service_development/models/voiceservice.py:39
+#: service_development/models/vse_choice.py:47
+msgid "Voice Service"
+msgstr "Service vocal"
+
+#: service_development/admin.py:137
+msgid "Message Presentation"
+msgstr "Présentation du message"
+
+#: service_development/models/session.py:13
+msgid "Starting time"
+msgstr "Heure de départ"
+
+#: service_development/models/session.py:15
+msgid "Ending time"
+msgstr "Heure de fin"
+
+#: service_development/models/session.py:17
+msgid "Caller ID"
+msgstr "Identification de l'appelant"
+
+#: service_development/models/session.py:22
+msgid "Call Session"
+msgstr "Session d'appel"
+
+#: service_development/models/session.py:68
+msgid "Time"
+msgstr "Temps"
+
+#: service_development/models/session.py:71
+#: service_development/models/user_input.py:12
+#: service_development/models/voicelabel.py:9
+#: service_development/models/voiceservice.py:18
+msgid "Description"
+msgstr "La description"
+
+#: service_development/models/session.py:73
+msgid "Call Session Step"
+msgstr "Étape de la session d'appel"
+
+#: service_development/models/user.py:16
+msgid "Phone number"
+msgstr "Numéro de téléphone"
+
+#: service_development/models/user.py:18
+msgid "First name"
+msgstr "Prénom"
+
+#: service_development/models/user.py:19
+msgid "Last name"
+msgstr "Nom de famille"
+
+#: service_development/models/user.py:20
+#: service_development/models/voiceservice.py:19
+#: service_development/models/vs_element.py:20
+msgid "Date created"
+msgstr "Date créée"
+
+#: service_development/models/user.py:21
+#: service_development/models/voiceservice.py:20
+#: service_development/models/vs_element.py:21
+msgid "Date last modified"
+msgstr "Date de la dernière modification"
+
+#: service_development/models/user.py:26
+msgid "KasaDaka User"
+msgstr "Utilisateur de KasaDaka"
+
+#: service_development/models/user_input.py:11
+#: service_development/models/voicelabel.py:8
+#: service_development/models/voicelabel.py:34
+#: service_development/models/voiceservice.py:17
+#: service_development/models/vs_element.py:22
+msgid "Name"
+msgstr "Nom"
+
+#: service_development/models/user_input.py:16
+msgid "User Input Category"
+msgstr "Catégorie d'entrée utilisateur"
+
+#: service_development/models/user_input.py:31
+msgid "Spoken User Input"
+msgstr "Entrée utilisateur parlée"
+
+#: service_development/models/user_input.py:37
+#, python-format
+msgid ""
+"Spoken User Input: %(category_name)s @ %(date)s %(time)s by %(caller_id)s "
+"(%(service_name)s)"
+msgstr ""
+"Entrée utilisateur parlée:%(category_name)s @ %(date)s %(time)s par "
+"%(caller_id)s (%(service_name)s)"
+
+#: service_development/models/user_input.py:44
+#: service_development/models/voicelabel.py:193
+msgid "Your browser does not support the audio element."
+msgstr "Votre navigateur ne supporte pas l'élément audio."
+
+#: service_development/models/user_input.py:48
+#: service_development/models/voicelabel.py:197
+msgid "Audio file player"
+msgstr "Lecteur de fichiers audio"
+
+#: service_development/models/voicelabel.py:12
+#: service_development/models/voicelabel.py:15
+msgid "Voice Label"
+msgstr "Étiquette vocale"
+
+#: service_development/models/voicelabel.py:20
+#: service_development/models/voiceservice.py:83
+#: service_development/models/vs_element.py:43
+#: service_development/models/vse_choice.py:18
+#: service_development/models/vse_choice.py:64
+#: service_development/models/vse_message.py:42
+#: service_development/models/vse_record.py:96
+msgid "Is valid"
+msgstr "Est valable"
+
+#: service_development/models/voicelabel.py:27
+#, python-format
+msgid ""
+"\"%(description_of_this_element)s\" does not have a Voice Fragment for "
+"\"%(language)s\""
+msgstr ""
+"\"%(description_of_this_element)s\" n'a pas de Fragment vocal pour "
+"\"%(language)s\""
+
+#: service_development/models/voicelabel.py:35
+msgid "Code"
+msgstr "Code"
+
+#: service_development/models/voicelabel.py:38
+msgid "Language voice label"
+msgstr "Étiquette vocale de langue"
+
+#: service_development/models/voicelabel.py:40
+msgid "A Voice Label of the name of the language"
+msgstr "Une étiquette vocale du nom de la langue"
+
+#: service_development/models/voicelabel.py:43
+msgid "Error message voice label"
+msgstr "Étiquette vocale du message d'erreur"
+
+#: service_development/models/voicelabel.py:45
+msgid "A general error message"
+msgstr "Un message d'erreur général"
+
+#: service_development/models/voicelabel.py:48
+msgid "Select language voice label"
+msgstr "Label vocal de sélection de la langue"
+
+#: service_development/models/voicelabel.py:50
+msgid "A message requesting the user to select a language"
+msgstr "Un message demandant à l'utilisateur de sélectionner une langue"
+
+#: service_development/models/voicelabel.py:53
+msgid "Pre-Choice Option voice label"
+msgstr "Étiquette vocale avant l'option incluse dans un choix"
+
+#: service_development/models/voicelabel.py:55
+msgid ""
+"The fragment that is to be played before a choice option (e.g. '[to select] "
+"option X, please press 1')"
+msgstr ""
+"Le fragment qui doit être joué avant une option de choix (par exemple '[pour "
+"sélectionner] l'option X, appuyez sur 1')"
+
+#: service_development/models/voicelabel.py:58
+msgid "Post-Choice Option voice label"
+msgstr "Étiquette vocale après l'option incluse dans un choix"
+
+#: service_development/models/voicelabel.py:60
+msgid ""
+"The fragment that is to be played before a choice option (e.g. 'to select "
+"option X, [please press] 1')"
+msgstr ""
+"Le fragment qui doit être joué avant une option de choix (par exemple 'pour "
+"sélectionner l'option X, [appuyez sur] 1')"
+
+# python-format
+#: service_development/models/voicelabel.py:63
+#: service_development/models/voicelabel.py:65
+#: service_development/models/voicelabel.py:68
+#: service_development/models/voicelabel.py:70
+#: service_development/models/voicelabel.py:73
+#: service_development/models/voicelabel.py:75
+#: service_development/models/voicelabel.py:78
+#: service_development/models/voicelabel.py:80
+#: service_development/models/voicelabel.py:83
+#: service_development/models/voicelabel.py:85
+#: service_development/models/voicelabel.py:88
+#: service_development/models/voicelabel.py:90
+#: service_development/models/voicelabel.py:93
+#: service_development/models/voicelabel.py:95
+#: service_development/models/voicelabel.py:98
+#: service_development/models/voicelabel.py:100
+#: service_development/models/voicelabel.py:103
+#: service_development/models/voicelabel.py:105
+#: service_development/models/voicelabel.py:108
+#: service_development/models/voicelabel.py:110
+#, python-format
+msgid "The number %(number)s"
+msgstr "Le nombre %(number)s"
+
+#: service_development/models/voicelabel.py:113
+msgid "Language"
+msgstr "La langue"
+
+#: service_development/models/voicelabel.py:170
+msgid "Audio"
+msgstr "l'audio"
+
+#: service_development/models/voicelabel.py:171
+msgid ""
+"Ensure your file is in the correct format! Wave: Sample rate 8KHz, 16 bit, "
+"mono, Codec: PCM 16 LE (s16l)"
+msgstr ""
+"Assurez-vous que votre fichier est au bon format! Wave: Taux "
+"d'échantillonnage 8KHz, 16 bits, mono, Codec: PCM 16 LE (s16l)"
+
+#: service_development/models/voicelabel.py:174
+msgid "Voice Fragment"
+msgstr "Fragment vocal"
+
+#: service_development/models/voicelabel.py:177
+#, python-format
+msgid "Voice Fragment: (%(name)s) %(name_parent)s"
+msgstr "Fragment vocal: (%(name)s) %(name_parent)s"
+
+#: service_development/models/voicelabel.py:186
+#, python-format
+msgid "%s does not have an audio file"
+msgstr "%s n'a pas de fichier audio"
+
+#: service_development/models/voiceservice.py:21
+msgid "Voice service active"
+msgstr "Service vocal actif"
+
+#: service_development/models/voiceservice.py:22
+msgid "This voice service is only accessible for users when marked active."
+msgstr ""
+"Ce service vocal est uniquement accessible aux utilisateurs lorsqu'ils sont "
+"marqués comme actifs."
+
+#: service_development/models/voiceservice.py:26
+#: service_development/models/voiceservice.py:48
+msgid "Starting element"
+msgstr "Élément de départ"
+
+#: service_development/models/voiceservice.py:29
+msgid "required (service does not function without Caller ID!)"
+msgstr ""
+"requis (le service ne fonctionne pas sans identification de l'appelant!)"
+
+#: service_development/models/voiceservice.py:30
+msgid "preferred"
+msgstr "préféré"
+
+#: service_development/models/voiceservice.py:31
+msgid "disabled"
+msgstr "désactivée"
+
+#: service_development/models/voiceservice.py:32
+msgid "User registration"
+msgstr "Enregistrement de l'utilisateur"
+
+#: service_development/models/voiceservice.py:33
+msgid "Register Language preference"
+msgstr "Enregistrer la langue préférée"
+
+#: service_development/models/voiceservice.py:33
+msgid ""
+"The preferred language will be asked and stored during the user registration "
+"process"
+msgstr ""
+"La langue préférée sera demandée et stockée pendant le processus "
+"d'inscription de l'utilisateur"
+
+#: service_development/models/voiceservice.py:34
+msgid "Register spoken name"
+msgstr "Inscrivez-vous au nom parlé"
+
+#: service_development/models/voiceservice.py:34
+msgid ""
+"The user will be asked to speak their name as part of the user registration "
+"process"
+msgstr ""
+"L'utilisateur sera invité à prononcer son nom dans le cadre du processus "
+"d'inscription de l'utilisateur"
+
+#: service_development/models/voiceservice.py:36
+msgid "Supported languages"
+msgstr "Langues supportées"
+
+#: service_development/models/voiceservice.py:55
+msgid "Supports only a single language"
+msgstr "Prend en charge une seule langue"
+
+#: service_development/models/voiceservice.py:73
+msgid "unknown"
+msgstr "inconnu"
+
+#: service_development/models/voiceservice.py:74
+msgid "VoiceXML endpoint URL"
+msgstr "URL du noeud final VoiceXML"
+
+#: service_development/models/voiceservice.py:78
+#, python-format
+msgid "Voice Service: %s"
+msgstr "Service vocal: %s"
+
+#: service_development/models/voiceservice.py:88
+msgid "No starting element"
+msgstr "Aucun élément de départ"
+
+#: service_development/models/voiceservice.py:94
+msgid "No supported languages"
+msgstr "Aucune langue prise en charge"
+
+#: service_development/models/vs_element.py:19
+msgid "The service to which this element belongs"
+msgstr "Le service auquel appartient cet élément"
+
+#: service_development/models/vs_element.py:28
+msgid "Voice label"
+msgstr "Étiquette vocale"
+
+#: service_development/models/vs_element.py:35
+msgid "Voice Service Sub-Element"
+msgstr "Sous-élément de service vocal"
+
+#: service_development/models/vs_element.py:56
+#, python-format
+msgid "No VoiceLabel in: \"%s\""
+msgstr "Pas de Étiquette vocale dans: \"%s\""
+
+#: service_development/models/vs_element.py:79
+msgid "Voice Service Element"
+msgstr "Élément de service vocal"
+
+#: service_development/models/vs_element.py:82
+#, python-format
+msgid "Element: %s"
+msgstr "Élément: %s"
+
+#: service_development/models/vse_choice.py:10
+msgid "Choice Element"
+msgstr "Élément de choix"
+
+#: service_development/models/vse_choice.py:40
+#: service_development/models/vse_message.py:18
+#: service_development/models/vse_record.py:72
+msgid "Redirect element"
+msgstr "Élément à rediriger vers"
+
+#: service_development/models/vse_choice.py:41
+msgid "The element to redirect to when this choice is made by the user."
+msgstr "L'élément à rediriger vers quand ce choix est fait par l'utilisateur"
+
+#: service_development/models/vse_choice.py:71
+#, python-format
+msgid "No redirect in choice option: \"%s\""
+msgstr "Pas de redirection dans l'option de choix: \"%s\""
+
+#: service_development/models/vse_choice.py:74
+#, python-format
+msgid ""
+"Choice option \"%(name_of_element)s\" not in correct (same) Voice Service as "
+"Choice element! (\"%(name_service_of_element)s\", should be "
+"\"%(name_service_of_parent_of_element)s\")"
+msgstr ""
+"L'option de choix \"%(name_of_element)s\" n'est pas correcte (même) Service "
+"vocal que l'élément de choix! (\"%(name_service_of_element)s\", devrait être "
+"\"%(name_service_of_parent_of_element)s\")"
+
+#: service_development/models/vse_choice.py:76
+#, python-format
+msgid ""
+"Redirect element of choice option \"%(name_of_element)s\" not in correct "
+"(same) Voice Service! (\"%(name_service_of_element)s\", should be "
+"\"%(name_service_of_parent_of_element)s\")"
+msgstr ""
+"Rediriger l'élément de l'option de choix \"%(name_of_element)s\" n'est pas "
+"correct (même) Service vocal! (\"%(name_service_of_element)s\", devrait être "
+"\"%(name_service_of_parent_of_element)s\")"
+
+#: service_development/models/vse_message.py:11
+msgid "This element will terminate the call"
+msgstr "Cet élément mettra fin à l'appel"
+
+#: service_development/models/vse_message.py:19
+#: service_development/models/vse_record.py:73
+msgid "The element to redirect to after the message has been played."
+msgstr "L'élément à rediriger après la lecture du message."
+
+#: service_development/models/vse_message.py:22
+msgid "Message Presentation Element"
+msgstr "Élément de présentation de message"
+
+#: service_development/models/vse_message.py:37
+msgid "Message: "
+msgstr "Message:"
+
+#: service_development/models/vse_message.py:48
+#, python-format
+msgid "Message %s does not have a redirect element and is not a final element"
+msgstr ""
+"Le message %s n'a pas d'élément de redirection et n'est pas un élément final"
+
+#: service_development/models/vse_message.py:51
+#, python-format
+msgid "There is a loop in %s"
+msgstr "Il y a une boucle dans %s"
+
+#: service_development/models/vse_record.py:17
+msgid "No response voice label"
+msgstr "Étiquette vocale en cas de pas de réponse"
+
+#: service_development/models/vse_record.py:18
+msgid ""
+"The voice label that is played when the system does not recognize the user "
+"saying anything. Example: \"We did not hear anything, please speak your "
+"message.\""
+msgstr ""
+"L'étiquette vocale qui est jouée lorsque le système ne reconnaît pas "
+"l'utilisateur en disant quoi que ce soit.Exemple: \"Nous n'avons rien "
+"entendu, s'il vous plaît dites votre message\""
+
+#: service_development/models/vse_record.py:24
+msgid "Allow the caller to start recording immediately"
+msgstr "Permettre à l'appelant de commencer à enregistrer immédiatement"
+
+#: service_development/models/vse_record.py:25
+msgid "Repeat the recording to the caller before asking for confirmation"
+msgstr "Répétez l'enregistrement à l'appelant avant de demander confirmation"
+
+#: service_development/models/vse_record.py:28
+msgid "Repeat input voice label"
+msgstr "Répéter l'entrée étiquette vocale"
+
+#: service_development/models/vse_record.py:29
+msgid ""
+"The voice label that is played before the system repeats the user input. "
+"Example: \"Your message is:\""
+msgstr ""
+"L'étiquette vocale qui est jouée avant que le système répète l'entrée de "
+"l'utilisateur.Exemple: \"Votre message est:\""
+
+#: service_development/models/vse_record.py:36
+msgid "Ask the caller to confirm their recording"
+msgstr "Demander à l'appelant de confirmer son enregistrement"
+
+#: service_development/models/vse_record.py:39
+msgid "Ask for confirmation voice label"
+msgstr "Étiquette vocale du demander confirmation"
+
+#: service_development/models/vse_record.py:40
+msgid ""
+"The voice label that asks the user to confirm their pinput. Example: \"Are "
+"you satisfied with your recording? Press 1 to confirm, or press 2 to retry.\""
+msgstr ""
+"L'étiquette vocale qui demande à l'utilisateur de confirmer son pinput. "
+"Exemple: \"Êtes-vous satisfait de votre enregistrement? Appuyez sur 1 pour "
+"confirmer ou sur 2 pour réessayer.\""
+
+#: service_development/models/vse_record.py:48
+msgid "Final voice label"
+msgstr "Étiquette vocale du fin"
+
+#: service_development/models/vse_record.py:49
+msgid ""
+"The voice label that is played when the user has completed the recording "
+"process. Example: \"Thank you for your message! The message has been stored "
+"successfully.\""
+msgstr ""
+"L'étiquette vocale qui est jouée lorsque l'utilisateur a terminé le "
+"processus d'enregistrement.Exemple: \"Merci pour votre message! Le message a "
+"été stocké avec succès"
+
+#: service_development/models/vse_record.py:57
+msgid "Input category"
+msgstr "Catégorie d'entrée"
+
+#: service_development/models/vse_record.py:58
+msgid "The category under which the input will be stored in the system."
+msgstr "La catégorie sous laquelle l'entrée sera stockée dans le système."
+
+#: service_development/models/vse_record.py:76
+msgid "Spoken Input Element"
+msgstr "Élément d'entrée parlé"
+
+#: service_development/models/vse_record.py:102
+#, python-format
+msgid "Record %s does not have a redirect element"
+msgstr "L'enregistrement %s n'a pas d'élément de redirection"
+
+#: settings.py:195
+msgid "English"
+msgstr "Anglais"
+
+#: settings.py:196
+msgid "French"
+msgstr "français"

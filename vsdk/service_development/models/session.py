@@ -3,19 +3,23 @@ from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext_lazy as _
 
 from . import KasaDakaUser
 from . import VoiceService, VoiceServiceElement
 from . import Language
 
 class CallSession(models.Model):
-    start = models.DateTimeField(auto_now_add = True)
+    start = models.DateTimeField(_('Starting time'),auto_now_add = True)
     #TODO: make some kind of handler when the Asterisk connection is closed, to officially end the session.
-    end = models.DateTimeField(null = True, blank = True)
+    end = models.DateTimeField(_('Ending time'),null = True, blank = True)
     user = models.ForeignKey(KasaDakaUser, on_delete = models.SET_NULL, null = True, blank = True)
-    caller_id = models.CharField(max_length = 100, blank = True, null = True)
+    caller_id = models.CharField(_('Caller ID'),max_length = 100, blank = True, null = True)
     service = models.ForeignKey(VoiceService, on_delete = models.SET_NULL, null = True)
     _language = models.ForeignKey(Language,on_delete = models.SET_NULL, null = True)
+
+    class Meta:
+        verbose_name = _('Call Session')
 
     def __str__(self):
         from django.template import defaultfilters
@@ -61,10 +65,12 @@ class CallSession(models.Model):
         return self
 
 class CallSessionStep(models.Model):
-    time = models.DateTimeField(auto_now_add = True)
+    time = models.DateTimeField(_('Time'),auto_now_add = True)
     session = models.ForeignKey(CallSession, on_delete = models.CASCADE, related_name = "steps")
     _visited_element = models.ForeignKey(VoiceServiceElement, on_delete = models.SET_NULL, null = True)
-    description = models.CharField(max_length = 1000,blank = True, null = True)
+    description = models.CharField(_('Description'),max_length = 1000,blank = True, null = True)
+    class Meta:
+        verbose_name = _('Call Session Step')
 
     def __str__(self):
         from django.template import defaultfilters

@@ -1,9 +1,13 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from .vs_element import VoiceServiceElement, VoiceServiceSubElement
 
 class Choice(VoiceServiceElement):
     _urls_name = 'service-development:choice'
+
+    class Meta:
+        verbose_name = _('Choice Element')
 
     def __str__(self):
         return self.name
@@ -11,6 +15,7 @@ class Choice(VoiceServiceElement):
     def is_valid(self):
         return len(self.validator()) == 0
     is_valid.boolean = True
+    is_valid.short_description = _('Is valid')
 
     def validator(self):
         errors = []
@@ -32,9 +37,14 @@ class ChoiceOption(VoiceServiceSubElement):
     _redirect = models.ForeignKey(
             VoiceServiceElement, 
             on_delete = models.SET_NULL,
+            verbose_name = _('Redirect element'),
+            help_text = _("The element to redirect to when this choice is made by the user."),
             related_name='%(app_label)s_%(class)s_redirect_related',
             blank = True,
             null = True)
+
+    class Meta:
+        verbose_name = _('Voice Service')
 
     @property
     def redirect(self):
@@ -51,18 +61,19 @@ class ChoiceOption(VoiceServiceSubElement):
     def is_valid(self):
         return len(self.validator()) == 0
     is_valid.boolean = True
+    is_valid.short_description = _('Is valid')
 
     def validator(self):
         errors = []
         errors.extend(super(ChoiceOption, self).validator())
         #check if redirect is present
         if not self._redirect:
-            errors.append('No redirect in choice option: "%s"'%str(self))
+            errors.append(_('No redirect in choice option: "%s"')%str(self))
         else:
             if self.service.id != self.parent.service.id:
-                errors.append('Choice option "%s" not in correct (same) Voice Service as Choice element! ("%s", should be "%s")'%(str(self),str(self.service),str(self.parent.service)))
+                errors.append(_('Choice option "%(name_of_element)s" not in correct (same) Voice Service as Choice element! ("%(name_service_of_element)s", should be "%(name_service_of_parent_of_element)s")')%{'name_of_element' : str(self),'name_service_of_element' : str(self.service),'name_service_of_parent_of_element' : str(self.parent.service)})
             if self.redirect.service.id != self.parent.service.id:
-                errors.append('Redirect element of choice option "%s" not in correct (same) Voice Service! ("%s", should be "%s")'%(str(self),str(self.redirect.service),str(self.service)))
+                errors.append(_('Redirect element of choice option "%(name_of_element)s" not in correct (same) Voice Service! ("%(name_service_of_element)s", should be "%(name_service_of_parent_of_element)s")')%{'name_of_element' : str(self),'name_service_of_element' : str(self.redirect.service),'name_service_of_parent_of_element' : str(self.service)})
 
         return errors
 

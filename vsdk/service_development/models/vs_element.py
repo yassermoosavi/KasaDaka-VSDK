@@ -1,6 +1,7 @@
 from django.db import models
 from model_utils.managers import InheritanceManager
 from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 
 from .voicelabel import VoiceLabel
 
@@ -15,19 +16,23 @@ class VoiceServiceSubElement(models.Model):
     objects = InheritanceManager()
 
     service = models.ForeignKey('VoiceService', on_delete = models.CASCADE,
-            help_text="The service to which this element belongs")
-    creation_date = models.DateTimeField('date created', auto_now_add = True)
-    modification_date = models.DateTimeField('date last modified', auto_now = True)
-    name = models.CharField(max_length=100)
+            help_text=_("The service to which this element belongs"))
+    creation_date = models.DateTimeField(_('Date created'), auto_now_add = True)
+    modification_date = models.DateTimeField(_('Date last modified'), auto_now = True)
+    name = models.CharField(_('Name'),max_length=100)
     description = models.CharField(
             max_length = 1000,
             blank = True)
     voice_label = models.ForeignKey(
             VoiceLabel,
+            verbose_name = _('Voice label'),
             on_delete = models.SET_NULL,
             null = True,
             blank = True,
             )
+
+    class Meta:
+        verbose_name = _('Voice Service Sub-Element')
 
     def __str__(self):
         return "Sub-element: %s" % self.name
@@ -35,6 +40,7 @@ class VoiceServiceSubElement(models.Model):
     def is_valid(self):
         return len(self.validator()) == 0
     is_valid.boolean = True
+    is_valid.short_description = _('Is valid')
 
     def validator(self):
         """
@@ -47,7 +53,7 @@ class VoiceServiceSubElement(models.Model):
             for language in self.service.supported_languages.all():
                 errors.extend(self.voice_label.validator(language))
         else:
-            errors.append('No VoiceLabel in: "%s"'%str(self))
+            errors.append(_('No VoiceLabel in: "%s"')%str(self))
         return errors
 
 
@@ -69,9 +75,11 @@ class VoiceServiceElement(VoiceServiceSubElement):
     objects = InheritanceManager()
     _urls_name = "" #This should be the same as in urls.py
     
+    class Meta:
+        verbose_name = _('Voice Service Element')
     
     def __str__(self):
-        return "Element: %s" % self.name
+        return _("Element: %s") % self.name
 
     def get_absolute_url(self, session):
         """

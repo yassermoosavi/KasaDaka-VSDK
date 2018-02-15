@@ -1,92 +1,116 @@
 from django.db import models
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 
 class VoiceLabel(models.Model):
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=1000, blank = True, null = True)
+    name = models.CharField(_('Name'),max_length=50)
+    description = models.CharField(_('Description'),max_length=1000, blank = True, null = True)
+
+    class Meta:
+        verbose_name = _('Voice Label')
 
     def __str__(self):
-        return "Voice Label: %s" % (self.name)
+        return _("Voice Label") + ": %s" % (self.name)
 
     def is_valid(self):
         return len(self.validator()) == 0
     is_valid.boolean = True
+    is_valid.short_description = _('Is valid')
 
     def validator(self, language):
         errors = []        
         if len(self.voicefragment_set.filter(language = language)) > 0:
             errors.extend(self.voicefragment_set.filter(language=language)[0].validator())
         else:
-            errors.append('"%s" does not have a Voice Fragment for "%s"'%(str(self),str(language)))
+            errors.append(_('"%(description_of_this_element)s" does not have a Voice Fragment for "%(language)s"') %{'description_of_this_element' : str(self),'language' : str(language)})
         return errors
 
     def get_voice_fragment_url(self, language):
         return self.voicefragment_set.filter(language=language)[0].get_url()
 
 class Language(models.Model):
-    name = models.CharField(max_length=100, unique = True)
-    code = models.CharField(max_length=10, unique = True)
+    name = models.CharField(_('Name'),max_length=100, unique = True)
+    code = models.CharField(_('Code'),max_length=10, unique = True)
     voice_label = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = _('Language voice label'),
             related_name = 'language_description_voice_label',
-            help_text = "A Voice Label of the name of the language")
+            help_text = _("A Voice Label of the name of the language"))
     error_message = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = _('Error message voice label'),
             related_name = 'language_error_message',
-            help_text = "A general error message")
+            help_text = _("A general error message"))
     select_language = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = _('Select language voice label'),
             related_name = 'language_select_language',
-            help_text = "A message requesting the user to select a language")
+            help_text = _("A message requesting the user to select a language"))
     pre_choice_option = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = _('Pre-Choice Option voice label'),
             related_name = 'language_pre_choice_option',
-            help_text = "The fragment that is to be played before a choice option (e.g. '[to select] option X, please press 1')")
+            help_text = _("The fragment that is to be played before a choice option (e.g. '[to select] option X, please press 1')"))
     post_choice_option = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = _('Post-Choice Option voice label'),
             related_name = 'language_post_choice_option',
-            help_text = "The fragment that is to be played before a choice option (e.g. 'to select option X, [please press] 1')")
+            help_text = _("The fragment that is to be played before a choice option (e.g. 'to select option X, [please press] 1')"))
     one = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = ugettext("The number %(number)s")% {'number':'1'},
             related_name = 'language_one',
-            help_text = "The number 1")
+            help_text = ugettext('The number %(number)s')% {'number':'1'})
     two = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = ugettext("The number %(number)s")% {'number':'2'},
             related_name = 'language_two',
-            help_text = "The number 2")
+            help_text = ugettext("The number %(number)s")% {'number':'2'})
     three = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = ugettext("The number %(number)s")% {'number':'3'},
             related_name = 'language_three',
-            help_text = "The number 3")
+            help_text = ugettext("The number %(number)s")% {'number':'3'})
     four = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = ugettext("The number %(number)s")% {'number':'4'},
             related_name = 'language_four',
-            help_text = "The number 4")
+            help_text = ugettext("The number %(number)s")% {'number':'4'})
     five = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = ugettext("The number %(number)s")% {'number':'5'},
             related_name = 'language_five',
-            help_text = "The number 5")
+            help_text = ugettext("The number %(number)s")% {'number':'5'})
     six = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = ugettext("The number %(number)s")% {'number':'6'},
             related_name = 'language_six',
-            help_text = "The number 6")
+            help_text = ugettext("The number %(number)s")% {'number':'6'})
     seven = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = ugettext("The number %(number)s")% {'number':'7'},
             related_name = 'language_seven',
-            help_text = "The number 7")
+            help_text = ugettext("The number %(number)s")% {'number':'7'})
     eight = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = ugettext("The number %(number)s")% {'number':'8'},
             related_name = 'language_eight',
-            help_text = "The number 8")
+            help_text = ugettext("The number %(number)s")% {'number':'8'})
     nine = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = ugettext("The number %(number)s")% {'number':'9'},
             related_name = 'language_nine',
-            help_text = "The number 9")
+            help_text = ugettext("The number %(number)s")% {'number':'9'})
     zero = models.ForeignKey('VoiceLabel',
             on_delete = models.PROTECT,
+            verbose_name = ugettext("The number %(number)s")% {'number':'0'},
             related_name = 'language_zero',
-            help_text = "The number 0")
+            help_text = ugettext("The number %(number)s")% {'number':'0'})
+
+    class Meta:
+        verbose_name = _('Language')
 
     def __str__(self):
         return '%s (%s)' % (self.name, self.code)
@@ -143,11 +167,14 @@ class VoiceFragment(models.Model):
     language = models.ForeignKey(
             'Language',
             on_delete = models.CASCADE)
-    audio = models.FileField(
-            help_text = "Ensure your file is in the correct format! Wave: Sample rate 8KHz, 16 bit, mono, Codec: PCM 16 LE (s16l)")
+    audio = models.FileField(_('Audio'),
+            help_text = _("Ensure your file is in the correct format! Wave: Sample rate 8KHz, 16 bit, mono, Codec: PCM 16 LE (s16l)"))
+
+    class Meta:
+        verbose_name = _('Voice Fragment')
 
     def __str__(self):
-        return "Voice Fragment: (%s) %s" % (self.language.name, self.parent.name)
+        return _("Voice Fragment: (%(name)s) %(name_parent)s") % {'name' : self.language.name, 'name_parent' : self.parent.name}
 
     def get_url(self):
         return self.audio.url
@@ -156,17 +183,17 @@ class VoiceFragment(models.Model):
         errors = []
         #TODO add some real wav file validation here?
         if not self.audio:
-            errors.append('%s does not have an audio file'%str(self))
+            errors.append(_('%s does not have an audio file')%str(self))
         return errors
 
     def audio_file_player(self):
         """audio player tag for admin"""
         if self.audio:
             file_url = settings.MEDIA_URL + str(self.audio)
-            player_string = '<audio src="%s" controls>Your browser does not support the audio element.</audio>' % (file_url)
+            player_string = str('<audio src="%s" controls>'  % (file_url) + ugettext('Your browser does not support the audio element.') + '</audio>')
             return player_string
 
     audio_file_player.allow_tags = True
-    audio_file_player.short_description = ('Audio file player')
+    audio_file_player.short_description = _('Audio file player')
 
 
