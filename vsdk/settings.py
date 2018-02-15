@@ -1,3 +1,6 @@
+from django.utils.translation import ugettext_lazy as _
+
+
 """
 Django settings for vsdk project.
 
@@ -51,6 +54,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     #TODO: disabled csrf middleware, is this usable with voiceXML?
     #    'django.middleware.csrf.CsrfViewMiddleware',
@@ -182,3 +186,12 @@ if not DEBUG:
     DEFAULT_FILE_STORAGE ='vsdk.custom_storages.MediaStorage'
 
 
+LOCALE_PATHS = (
+        os.path.join(os.path.abspath(os.path.dirname(__file__)), 'locale'),
+            )
+
+# Provide a lists of languages which your site supports.
+LANGUAGES = (
+             ('en', _('English')),
+                 ('fr', _('French')),
+                 )
