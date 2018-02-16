@@ -94,4 +94,7 @@ ENV/
 *db.sqlite3
 uploads/*
 #vsdk/settings.py
+vsdk/static
+vsdk/uploads
 vsdk/staticfiles
+
