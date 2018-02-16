@@ -34,9 +34,6 @@ def validate_audio_file_format(value):
     if not re.search(r"Audio\s*Format\s*: PCM", mediainfo_result):
         return False
 
-    if not re.search(r"Format settings\s*: Little \/ Signed", mediainfo_result):
-        return False
-
     if not re.search(r".wav\s*Format\s*: Wave\s*", mediainfo_result):
         return False
 
