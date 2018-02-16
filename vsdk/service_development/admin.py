@@ -44,7 +44,7 @@ class VoiceServiceAdmin(admin.ModelAdmin):
                 subprocess.getoutput("sudo /etc/init.d/asterisk reload")
                 messages.add_message(request, messages.WARNING, _('Voice service activated. Other voice services have been deactivated, the Asterisk configuration has been changed to point to this service, and this new configuration has been loaded.'))
             else:
-                messages.add_message(request, messages.WARNING, _('Voice service activated. Other voice services have been deactivated. THE ASTERISK CONFIGURATION COULD NOT BE FOUND!'))
+                messages.add_message(request, messages.ERROR, _('Voice service activated. Other voice services have been deactivated. THE ASTERISK CONFIGURATION COULD NOT BE FOUND!'))
         super(VoiceServiceAdmin, self).save_model(request, obj, form, change)
 
     def get_readonly_fields(self, request, obj=None):
