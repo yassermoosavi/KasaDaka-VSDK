@@ -2,6 +2,7 @@ from django.db import models
 from model_utils.managers import InheritanceManager
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 from .voicelabel import VoiceLabel
 
@@ -53,7 +54,7 @@ class VoiceServiceSubElement(models.Model):
             for language in self.service.supported_languages.all():
                 errors.extend(self.voice_label.validator(language))
         else:
-            errors.append(_('No VoiceLabel in: "%s"')%str(self))
+            errors.append(ugettext('No VoiceLabel in: "%s"')%str(self))
         return errors
 
 

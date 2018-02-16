@@ -61,5 +61,4 @@ def voice_service_start(request, voice_service_id, session_id = None):
         return base.redirect_add_get_parameters('service-development:language-selection',
                         session.id,
                         redirect_url = return_url)
-
     return base.redirect_to_voice_service_element(voice_service.start_element, session)

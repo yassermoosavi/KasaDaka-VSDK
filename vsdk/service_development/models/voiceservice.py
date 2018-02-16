@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -6,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
 from django.utils.translation import ugettext_lazy as _
-
+from django.utils.translation import ugettext
 
 from .voicelabel import VoiceLabel, Language, VoiceFragment
 from .vs_element import VoiceServiceElement
@@ -19,7 +20,7 @@ class VoiceService(models.Model):
     creation_date = models.DateTimeField(_('Date created'), auto_now_add = True)
     modification_date = models.DateTimeField(_('Date last modified'), auto_now = True)
     active = models.BooleanField(_('Voice service active'),
-            help_text = _("This voice service is only accessible for users when marked active."))
+            help_text = _("A voice service that is active is accessible to users. Marking this service as active (which is only possible when it is valid) will activate this service and disactivate all other services."))
     _start_element = models.ForeignKey(            
             VoiceServiceElement,
             related_name='%(app_label)s_%(class)s_related',
@@ -38,6 +39,14 @@ class VoiceService(models.Model):
     class Meta:
         verbose_name = _('Voice Service')
     
+    def get_vxml_url(self):
+        try:
+            return reverse(self._urls_name, kwargs ={'voice_service_id': self.id})
+        except NoReverseMatch:
+            return _("unknown")
+    get_vxml_url.short_description = _("VoiceXML endpoint URL")
+    vxml_url = property(get_vxml_url)
+
     def _get_start_element(self):
         """
         Returns the actual subclassed object that is redirected to,
@@ -71,32 +80,27 @@ class VoiceService(models.Model):
         "Returns True if user registration is disabled"
         return self.registration == 'disabled'
     
-    def get_vxml_url(self):
-        try:
-            return reverse(self._urls_name, kwargs ={'voice_service_id': self.id})
-        except NoReverseMatch:
-            return _("unknown")
-    get_vxml_url.short_description = _("VoiceXML endpoint URL")
-    vxml_url = property(get_vxml_url)
     
     def __str__(self):
         return _('Voice Service: %s') % self.name
 
     def is_valid(self):
-        return len(self.validator()) == 0
+        if not len(self.validator()) == 0:
+            return False
+        else: return True
     is_valid.boolean = True
     is_valid.short_description = _('Is valid')
 
     def validator(self):
         errors = []
         if not self._start_element:
-            errors.append(_('No starting element'))
+            errors.append(ugettext('No starting element'))
         else:
             associated_elements = self.voiceservicesubelement_set.all()
             for sub_element in associated_elements:
                 errors.extend(sub_element.get_subclass_object().validator())
         if len(self.supported_languages.all()) == 0:
-            errors.append(_('No supported languages'))
+            errors.append(ugettext('No supported languages'))
 
         #deduplicate errors
         errors = list(set(errors))

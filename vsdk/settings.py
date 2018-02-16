@@ -31,8 +31,8 @@ SECRET_KEY = 'tk2(l(00&kfe7j97j$dvgz&b6r!kk_zbse1(9w*eoc$bcwu773'
 ##########
 #Use True on your local PC, False on Heroku!!
 ########
-#DEBUG = True
-DEBUG = False
+DEBUG = True
+#DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -195,3 +195,5 @@ LANGUAGES = (
              ('en', _('English')),
                  ('fr', _('French')),
                  )
+ASTERISK_EXTENSIONS_FILE = '/etc/asterisk/extensions.conf'
+VXML_HOST_ADDRESS = 'http://127.0.0.1'

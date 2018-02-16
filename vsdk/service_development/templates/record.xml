@@ -3,7 +3,7 @@
 
 <form id="record_form">
 
-<record name="recording" beep="true" maxtime="60s"
+	<record name="recording" beep="true" maxtime="{{ max_time_input }}s"
   finalsilence="4s" dtmfterm="true" {% if record.barge_in %} bargein="true" {% endif %} >
 <prompt>
 <audio src="{{ voice_label }}"/>

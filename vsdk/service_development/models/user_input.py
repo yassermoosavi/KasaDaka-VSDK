@@ -10,7 +10,7 @@ from . import CallSession, VoiceService
 class UserInputCategory(models.Model):
     name = models.CharField(_('Name'),max_length = 100, blank = False, null = False)
     description = models.CharField(_('Description'),max_length = 1000, blank = True, null = True)
-    service = models.ForeignKey(VoiceService, on_delete=models.CASCADE, related_name="service")
+    service = models.ForeignKey(VoiceService, on_delete=models.CASCADE, related_name="service", verbose_name = _('Voice service'))
 
     class Meta:
         verbose_name = _('User Input Category')
@@ -20,11 +20,11 @@ class UserInputCategory(models.Model):
 
 class SpokenUserInput(models.Model):
     #value = models.CharField(max_length = 100, blank = True, null = True)
-    audio = models.FileField(upload_to='uploads/', blank=False, null= False)
-    time = models.DateTimeField(auto_now_add = True)
+    audio = models.FileField(_('Audio file'),upload_to='uploads/', blank=False, null= False)
+    time = models.DateTimeField(_('Time'),auto_now_add = True)
     session = models.ForeignKey(CallSession, on_delete=models.CASCADE, related_name="session")
-    category = models.ForeignKey(UserInputCategory, on_delete=models.CASCADE, related_name="category")
-    description = models.CharField(max_length = 1000, blank = True, null = True)
+    category = models.ForeignKey(UserInputCategory, on_delete=models.CASCADE, related_name="category", verbose_name = _('Category'))
+    description = models.CharField(max_length = 1000, blank = True, null = True, verbose_name = _('Description'))
 
 
     class Meta:

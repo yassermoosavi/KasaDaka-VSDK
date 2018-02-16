@@ -3,6 +3,8 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 
+from .validators import validate_audio_file_extension, validate_audio_file_format
+
 
 class VoiceLabel(models.Model):
     name = models.CharField(_('Name'),max_length=50)
@@ -24,7 +26,7 @@ class VoiceLabel(models.Model):
         if len(self.voicefragment_set.filter(language = language)) > 0:
             errors.extend(self.voicefragment_set.filter(language=language)[0].validator())
         else:
-            errors.append(_('"%(description_of_this_element)s" does not have a Voice Fragment for "%(language)s"') %{'description_of_this_element' : str(self),'language' : str(language)})
+            errors.append(ugettext('"%(description_of_this_element)s" does not have a Voice Fragment for "%(language)s"') %{'description_of_this_element' : str(self),'language' : str(language)})
         return errors
 
     def get_voice_fragment_url(self, language):
@@ -168,10 +170,32 @@ class VoiceFragment(models.Model):
             'Language',
             on_delete = models.CASCADE)
     audio = models.FileField(_('Audio'),
-            help_text = _("Ensure your file is in the correct format! Wave: Sample rate 8KHz, 16 bit, mono, Codec: PCM 16 LE (s16l)"))
+            validators=[validate_audio_file_extension],
+            help_text = _("Ensure your file is in the correct format! Wave (.wav) : Sample rate 8KHz, 16 bit, mono, Codec: PCM 16 LE (s16l)"))
+
 
     class Meta:
         verbose_name = _('Voice Fragment')
+
+    def convert_wav_to_correct_format(self):
+        import subprocess
+        from os.path import basename
+        new_file_name = self.audio.path[:-4] + "_conv.wav"
+        subprocess.getoutput("sox -S %s -r 8k -b 16 -c 1 -e signed-integer %s"% (self.audio.path, new_file_name))
+        self.audio = basename(new_file_name)
+        
+        
+
+
+    def save(self, *args, **kwargs):
+        super(VoiceFragment, self).save(*args, **kwargs)
+        format_correct = validate_audio_file_format(self.audio)
+        if not format_correct: 
+            self.convert_wav_to_correct_format()
+        super(VoiceFragment, self).save(*args, **kwargs)
+
+
+
 
     def __str__(self):
         return _("Voice Fragment: (%(name)s) %(name_parent)s") % {'name' : self.language.name, 'name_parent' : self.parent.name}
@@ -181,10 +205,16 @@ class VoiceFragment(models.Model):
 
     def validator(self):
         errors = []
-        #TODO add some real wav file validation here?
         if not self.audio:
-            errors.append(_('%s does not have an audio file')%str(self))
+            errors.append(ugettext('%s does not have an audio file')%str(self))
+        elif not validate_audio_file_format(self.audio):
+            errors.append(ugettext('%s audio file is not in the correct format! Should be: Wave: Sample rate 8KHz, 16 bit, mono, Codec: PCM 16 LE (s16l)'%str(self)))
         return errors
+
+    def is_valid(self):
+        return len(self.validator()) == 0
+    is_valid.boolean = True
+    is_valid.short_description = _('Is valid')
 
     def audio_file_player(self):
         """audio player tag for admin"""

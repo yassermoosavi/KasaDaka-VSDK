@@ -1,6 +1,7 @@
+from django.conf import settings
+from django.contrib import messages
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-
 
 from .models import *
 
@@ -13,10 +14,38 @@ def format_validation_result(obj):
 
 class VoiceServiceAdmin(admin.ModelAdmin):
     fieldsets = [(_('General'),    {'fields' : ['name', 'description', 'vxml_url', 'active', 'is_valid', 'validation_details', 'supported_languages']}),
-                    (_('Registration process'), {'fields': ['registration', 'registration_language', 'registration_name']}),
+                    (_('Registration process'), {'fields': ['registration', 'registration_language']}),
                     (_('Call flow'), {'fields': ['_start_element']})]
     list_display = ('name','active', 'is_valid')
     readonly_fields = ('vxml_url', 'is_valid', 'validation_details')
+
+    def save_model(self, request, obj, form, change):
+        if obj.active and 'active' in form.changed_data:
+            #set all other voice services to inactive
+            other_vs = VoiceService.objects.exclude(pk=obj.id)
+            for vs in other_vs:
+                vs.active = False
+                vs.save()
+            #change asterisk config here
+            from pathlib import Path
+            my_file = Path(settings.ASTERISK_EXTENSIONS_FILE)
+            if my_file.is_file():
+                extensions = ''
+                with open(settings.ASTERISK_EXTENSIONS_FILE) as infile:
+                    import re
+                    extensions = infile.read()
+                    regex = r"(Vxml\()(.+)(\?callerid\=\$\{CALLERID\(num\)\}\))"
+                    subst = "\\1"+ settings.VXML_HOST_ADDRESS + str(obj.get_vxml_url()) + "\\3"
+                    extensions = re.sub(regex, subst, extensions, 0)
+                with open(settings.ASTERISK_EXTENSIONS_FILE, 'w') as outfile:
+                    outfile.write(extensions)
+                #Reload asterisk
+                import subprocess
+                subprocess.getoutput("sudo /etc/init.d/asterisk reload")
+                messages.add_message(request, messages.WARNING, _('Voice service activated. Other voice services have been deactivated, the Asterisk configuration has been changed to point to this service, and this new configuration has been loaded.'))
+            else:
+                messages.add_message(request, messages.WARNING, _('Voice service activated. Other voice services have been deactivated. THE ASTERISK CONFIGURATION COULD NOT BE FOUND!'))
+        super(VoiceServiceAdmin, self).save_model(request, obj, form, change)
 
     def get_readonly_fields(self, request, obj=None):
         """
@@ -60,8 +89,8 @@ class VoiceLabelInline(admin.TabularInline):
     model = VoiceFragment
     extra = 2
     fk_name = 'parent'
-    fieldsets = [(_('General'),    {'fields' : [ 'language', 'audio', 'audio_file_player']})]
-    readonly_fields = ('audio_file_player',)
+    fieldsets = [(_('General'),    {'fields' : [ 'language', 'is_valid', 'audio', 'audio_file_player']})]
+    readonly_fields = ('audio_file_player','is_valid')
 
 
 
@@ -119,19 +148,19 @@ class CallSessionAdmin(admin.ModelAdmin):
     fieldsets = [(_('General'), {'fields' : ['service', 'user','caller_id','start','end','language']})]
     readonly_fields = ('service','user','caller_id','start','end','language') 
     inlines = [CallSessionInline]
-    can_delete = False
+    can_delete = True
 
     def has_add_permission(self, request):
         return False
 
     def has_delete_permission(self, request, obj=None):
-        return False
+        return True
 
-    def get_actions(self, request):
-        actions = super(CallSessionAdmin, self).get_actions(request)
-        if 'delete_selected' in actions:
-            del actions['delete_selected']
-        return actions
+    #def get_actions(self, request):
+    #    actions = super(CallSessionAdmin, self).get_actions(request)
+    #    if 'delete_selected' in actions:
+    #        del actions['delete_selected']
+    #    return actions
 
 class MessagePresentationAdmin(VoiceServiceElementAdmin):
     fieldsets = VoiceServiceElementAdmin.fieldsets + [(_('Message Presentation'), {'fields': ['_redirect','final_element']})]

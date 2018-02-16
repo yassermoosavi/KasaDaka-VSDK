@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext
 from django.utils.translation import ugettext_lazy as _
 
 from .vs_element import VoiceServiceElement, VoiceServiceSubElement
@@ -68,12 +69,12 @@ class ChoiceOption(VoiceServiceSubElement):
         errors.extend(super(ChoiceOption, self).validator())
         #check if redirect is present
         if not self._redirect:
-            errors.append(_('No redirect in choice option: "%s"')%str(self))
+            errors.append(ugettext('No redirect in choice option: "%s"')%str(self))
         else:
             if self.service.id != self.parent.service.id:
-                errors.append(_('Choice option "%(name_of_element)s" not in correct (same) Voice Service as Choice element! ("%(name_service_of_element)s", should be "%(name_service_of_parent_of_element)s")')%{'name_of_element' : str(self),'name_service_of_element' : str(self.service),'name_service_of_parent_of_element' : str(self.parent.service)})
+                errors.append(ugettext('Choice option "%(name_of_element)s" not in correct (same) Voice Service as Choice element! ("%(name_service_of_element)s", should be "%(name_service_of_parent_of_element)s")')%{'name_of_element' : str(self),'name_service_of_element' : str(self.service),'name_service_of_parent_of_element' : str(self.parent.service)})
             if self.redirect.service.id != self.parent.service.id:
-                errors.append(_('Redirect element of choice option "%(name_of_element)s" not in correct (same) Voice Service! ("%(name_service_of_element)s", should be "%(name_service_of_parent_of_element)s")')%{'name_of_element' : str(self),'name_service_of_element' : str(self.redirect.service),'name_service_of_parent_of_element' : str(self.service)})
+                errors.append(ugettext('Redirect element of choice option "%(name_of_element)s" not in correct (same) Voice Service! ("%(name_service_of_element)s", should be "%(name_service_of_parent_of_element)s")')%{'name_of_element' : str(self),'name_service_of_element' : str(self.redirect.service),'name_service_of_parent_of_element' : str(self.service)})
 
         return errors
 

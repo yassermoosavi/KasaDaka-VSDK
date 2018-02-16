@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 from vsdk.service_development.models import VoiceLabel
 from .vs_element import VoiceServiceElement
@@ -61,6 +62,7 @@ class Record(VoiceServiceElement):
         blank=True,
         related_name='input_category',
     )
+    max_time_input = models.IntegerField(_('Maximum time of message (seconds)'),default=180)
 
 
     _redirect = models.ForeignKey(
@@ -99,6 +101,6 @@ class Record(VoiceServiceElement):
         errors = []
         errors.extend(super(Record, self).validator())
         if not self._redirect:
-            errors.append(_('Record %s does not have a redirect element') % self.name)
+            errors.append(ugettext('Record %s does not have a redirect element') % self.name)
         return errors
 

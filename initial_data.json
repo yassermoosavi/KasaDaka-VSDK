@@ -184,6 +184,14 @@
   }
 },
 {
+  "model": "service_development.voicelabel",
+  "pk": 25,
+  "fields": {
+    "name": "Please speak your message",
+    "description": ""
+  }
+},
+{
   "model": "service_development.language",
   "pk": 1,
   "fields": {
@@ -233,7 +241,7 @@
   "model": "service_development.language",
   "pk": 3,
   "fields": {
-    "name": "French",
+    "name": "Francais",
     "code": "fr",
     "voice_label": 7,
     "error_message": 2,
@@ -874,12 +882,21 @@
   }
 },
 {
+  "model": "service_development.voicefragment",
+  "pk": 74,
+  "fields": {
+    "parent": 25,
+    "language": 3,
+    "audio": "speakYourMessage.wav"
+  }
+},
+{
   "model": "service_development.voiceservicesubelement",
   "pk": 2,
   "fields": {
     "service": 1,
     "creation_date": "2017-04-23T19:30:23.792Z",
-    "modification_date": "2017-04-23T23:13:42.317Z",
+    "modification_date": "2018-02-16T16:42:26.402Z",
     "name": "Does the king like to drink beer?",
     "description": "",
     "voice_label": 23
@@ -891,7 +908,7 @@
   "fields": {
     "service": 1,
     "creation_date": "2017-04-23T19:32:07.853Z",
-    "modification_date": "2017-04-23T22:51:29.350Z",
+    "modification_date": "2018-01-25T14:35:48.977Z",
     "name": "Yes",
     "description": "King <3's BEER",
     "voice_label": 21
@@ -903,7 +920,7 @@
   "fields": {
     "service": 1,
     "creation_date": "2017-04-23T19:32:07.854Z",
-    "modification_date": "2017-04-23T22:51:29.352Z",
+    "modification_date": "2018-02-16T16:42:26.405Z",
     "name": "No",
     "description": "",
     "voice_label": 22
@@ -915,7 +932,7 @@
   "fields": {
     "service": 1,
     "creation_date": "2017-04-23T19:49:50.055Z",
-    "modification_date": "2017-04-23T21:17:07.984Z",
+    "modification_date": "2018-02-16T16:42:51.484Z",
     "name": "This is the truth",
     "description": "",
     "voice_label": 3
@@ -972,15 +989,30 @@
     "name": "King's truth checker",
     "description": "Checks the user's knowledge about the king of the Netherlands",
     "creation_date": "2017-04-23T19:23:52.392Z",
-    "modification_date": "2017-04-23T23:19:18.069Z",
-    "active": true,
+    "modification_date": "2018-02-16T09:58:43.936Z",
+    "active": false,
     "_start_element": 2,
-    "requires_registration": false,
+    "registration": "preferred",
+    "registration_language": true,
+    "registration_name": false,
     "supported_languages": [
       1,
       2,
       3
     ]
+  }
+},
+{
+  "model": "service_development.kasadakauser",
+  "pk": 1,
+  "fields": {
+    "caller_id": "456",
+    "first_name": "Henk",
+    "last_name": "Ernia",
+    "creation_date": "2018-02-02T11:10:27.670Z",
+    "modification_date": "2018-02-12T14:44:24.019Z",
+    "language": 1,
+    "service": 1
   }
 },
 {

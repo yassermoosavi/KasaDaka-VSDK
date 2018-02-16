@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 from .vs_element import VoiceServiceElement
 
@@ -45,10 +46,10 @@ class MessagePresentation(VoiceServiceElement):
         errors = []
         errors.extend(super(MessagePresentation, self).validator())
         if not self.final_element and not self._redirect:
-            errors.append(_('Message %s does not have a redirect element and is not a final element')%self.name)
+            errors.append(ugettext('Message %s does not have a redirect element and is not a final element')%self.name)
         elif not self.final_element:
             if self._redirect.id == self.id:
-                errors.append(_('There is a loop in %s')%str(self))
+                errors.append(ugettext('There is a loop in %s')%str(self))
 
 
         return errors
