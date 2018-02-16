@@ -31,8 +31,8 @@ SECRET_KEY = 'tk2(l(00&kfe7j97j$dvgz&b6r!kk_zbse1(9w*eoc$bcwu773'
 ##########
 #Use True on your local PC, False on Heroku!!
 ########
-DEBUG = True
-#DEBUG = False
+#DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -86,28 +86,11 @@ WSGI_APPLICATION = 'vsdk.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-if DEBUG:
-     DATABASES = {
-             'default': {
-                         'ENGINE': 'django.db.backends.sqlite3',
-                         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-                     }
-          }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'this is not a correct database',
-            'USER': 'this is not a corret user',
-            'PASSWORD': 'this is not a correct password (probably)',
-            'HOST': 'localhost',
-            'PORT':'',
-        }
-    }
-    import dj_database_url
-    db_from_env = dj_database_url.config(conn_max_age=500)
-    DATABASES['default'].update(db_from_env)
-
+DATABASES = {
+     'default': {
+		 'ENGINE': 'django.db.backends.sqlite3',
+		 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+	     }}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -148,9 +131,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
-STATIC_ROOT = os.path.join(SITE_ROOT, 'staticfiles')
+STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
 STATICFILES_DIRS = (
-  os.path.join(SITE_ROOT, 'static/'),
+#  os.path.join(SITE_ROOT, 'static/'),
   os.path.join(SITE_ROOT, 'uploads/'),
 )
 
@@ -177,13 +160,6 @@ STATICFILES_LOCATION = FTP_STORAGE_LOCATION + '/static/'
 MEDIAFILES_LOCATION = FTP_STORAGE_LOCATION + '/media/'
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-    STATIC_URL = "http://ict4d-vps.andrebaart.nl/django-static/" + FTP_DIR + "/static/"
-    MEDIA_URL = "http://ict4d-vps.andrebaart.nl/django-static/" + FTP_DIR + "/"
-
-    STATICFILES_STORAGE = 'vsdk.custom_storages.StaticStorage'
-    DEFAULT_FILE_STORAGE ='vsdk.custom_storages.MediaStorage'
 
 
 LOCALE_PATHS = (
