@@ -26,6 +26,7 @@ class VoiceService(models.Model):
             related_name='%(app_label)s_%(class)s_related',
             verbose_name=_('Starting element'),
             null = True,
+            on_delete = models.SET_NULL,
             blank = True)
     registration_choices = [('required', _('required (service does not function without Caller ID!)')),
                             ('preferred', _('preferred')),

@@ -32,7 +32,9 @@ SECRET_KEY = 'tk2(l(00&kfe7j97j$dvgz&b6r!kk_zbse1(9w*eoc$bcwu773'
 #Use True on your local PC, False on Heroku!!
 ########
 #DEBUG = True
+
 DEBUG = False
+
 
 ALLOWED_HOSTS = ['*']
 
@@ -147,20 +149,54 @@ MEDIA_URL = '/uploads/'
 
 
 
-# Simplified static file serving.ALLOWED_HOSTS#
-# https://warehouse.python.org/project/whitenoise/
 try:
-    FTP_PASS =  os.environ['FTP_PASS']
-    FTP_DIR = os.environ['FTP_DIR']
+    SFTP_PASS =  os.environ['SFTP_PASS']
+    SFTP_USER = os.environ['SFTP_USER']
+    HEROKU =os.environ['HEROKU'] 
+    SFTP_HOST = os.environ['SFTP_HOST']
+    SFTP_PORT = os.environ['SFTP_PORT']
+
 except KeyError:
-    FTP_PASS = ""
-    FTP_DIR = ""
-FTP_STORAGE_LOCATION = 'ftp://ict4d:' + FTP_PASS + '@ict4d-vps.andrebaart.nl:21/'+ FTP_DIR +'/'
-STATICFILES_LOCATION = FTP_STORAGE_LOCATION + '/static/'
-MEDIAFILES_LOCATION = FTP_STORAGE_LOCATION + '/media/'
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+    SFTP_PASS = ""
+    SFTP_USER = ""
+    HEROKU = False
+    SFTP_HOST = ""
+    SFTP_PORT = ""
 
+if HEROKU and not DEBUG:
+    SFTP_STORAGE_HOST = SFTP_HOST
+    SFTP_STORAGE_ROOT = '/django/'
+    SFTP_STORAGE_PARAMS = {
+            'port': SFTP_PORT,
+            'username': SFTP_USER,
+            'password': SFTP_PASS,
+            'allow_agent': False,
+            'look_for_keys': False,
+            }
+    STATICFILES_LOCATION = SFTP_STORAGE_HOST + '/static/'
+    MEDIAFILES_LOCATION = SFTP_STORAGE_HOST + '/media/'
+    DEFAULT_FILE_STORAGE = 'storages.backends.sftpstorage.SFTPStorage'
+    STATICFILES_STORAGE = 'storages.backends.sftpstorage.SFTPStorage'
+    STATIC_URL = "http://" + SFTP_HOST + "/" + SFTP_USER + "/django/"
+    MEDIA_URL = "http://" + SFTP_HOST + "/" + SFTP_USER + "/django/"
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'this is not a correct database',
+            'USER': 'this is not a corret user',
+            'PASSWORD': 'this is not a correct password (probably)',
+            'HOST': 'localhost',
+            'PORT':'',
+        }
+    }
+    import dj_database_url
+    db_from_env = dj_database_url.config(conn_max_age=500)
+    DATABASES['default'].update(db_from_env)
+else:
+    STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
+#Only set this to True when sox and mediainfo are available, and local storage is used for static files.
+KASADAKA = False
 
 LOCALE_PATHS = (
         os.path.join(os.path.abspath(os.path.dirname(__file__)), 'locale'),
@@ -173,3 +209,33 @@ LANGUAGES = (
                  )
 ASTERISK_EXTENSIONS_FILE = '/etc/asterisk/extensions.conf'
 VXML_HOST_ADDRESS = 'http://127.0.0.1'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+     'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
+

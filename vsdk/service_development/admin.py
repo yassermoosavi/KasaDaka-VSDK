@@ -2,7 +2,9 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from django.utils.safestring import mark_safe
 
+from vsdk import settings
 from .models import *
 
 def format_validation_result(obj):
@@ -20,7 +22,7 @@ class VoiceServiceAdmin(admin.ModelAdmin):
     readonly_fields = ('vxml_url', 'is_valid', 'validation_details')
 
     def save_model(self, request, obj, form, change):
-        if obj.active and 'active' in form.changed_data:
+        if obj.active and 'active' in form.changed_data and settings.KASADAKA:
             #set all other voice services to inactive
             other_vs = VoiceService.objects.exclude(pk=obj.id)
             for vs in other_vs:
@@ -58,8 +60,7 @@ class VoiceServiceAdmin(admin.ModelAdmin):
 
 
     def validation_details(self, obj=None):
-        return format_validation_result(obj)
-    validation_details.allow_tags = True
+        return mark_safe(format_validation_result(obj))
     validation_details.short_description = _('Validation errors')
     
 
@@ -70,8 +71,7 @@ class VoiceServiceElementAdmin(admin.ModelAdmin):
     readonly_fields = ('is_valid', 'validation_details')
      
     def validation_details(self, obj=None):
-        return format_validation_result(obj)
-    validation_details.allow_tags = True
+        return mark_safe(format_validation_result(obj))
     validation_details.short_description = _('Validation errors')
 
 class ChoiceOptionsInline(admin.TabularInline):
@@ -91,7 +91,6 @@ class VoiceLabelInline(admin.TabularInline):
     fk_name = 'parent'
     fieldsets = [(_('General'),    {'fields' : [ 'language', 'is_valid', 'audio', 'audio_file_player']})]
     readonly_fields = ('audio_file_player','is_valid')
-
 
 
 
@@ -130,6 +129,10 @@ class VoiceLabelAdmin(admin.ModelAdmin):
     list_filter = [VoiceLabelByVoiceServicesFilter]
     inlines = [VoiceLabelInline]
 
+    def save_model(self, request, obj, form, change):
+        if not settings.KASADAKA:
+            messages.add_message(request, messages.WARNING, _('Automatic .wav file conversion only works when running on real KasaDaka system. MANUALLY ensure your files are in the correct format! Wave (.wav) : Sample rate 8KHz, 16 bit, mono, Codec: PCM 16 LE (s16l)'))
+        super(VoiceLabelAdmin,self).save_model(request, obj, form, change)
 
 
 

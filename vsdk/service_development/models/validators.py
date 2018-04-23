@@ -1,10 +1,15 @@
 from django.utils.translation import ugettext as _
-
+from vsdk import settings
 
 def validate_audio_file_extension(value):
     import os
     from django.core.exceptions import ValidationError
-    ext = os.path.splitext(value.name)[1]  # [0] returns path+filename
+    #Required for Heroku, django-storages backend
+    try:
+        path = value.name
+    except NotImplementedError:
+        path = value.url
+    ext = os.path.splitext(path)[1]  # [0] returns path+filename
     valid_extensions = ['.wav']
     if not ext.lower() in valid_extensions:
         raise ValidationError(_('Unsupported file extension. Only .wav files are supported.'))
@@ -14,10 +19,14 @@ def validate_audio_file_format(value):
     import subprocess
     import re
     from django.core.exceptions import ValidationError
-    path_to_file = value.path
+    #Required for Heroku, django-storages backend
+    try:
+        path_to_file = value.path
+    except NotImplementedError:
+        path_to_file = value.url
     mediainfo_result = subprocess.getoutput("mediainfo "+ path_to_file)
 
-    ext = os.path.splitext(value.path)[1]  # [0] returns path+filename
+    ext = os.path.splitext(path_to_file)[1]  # [0] returns path+filename
     valid_extensions = ['.wav']
     if not ext.lower() in valid_extensions:
         return False

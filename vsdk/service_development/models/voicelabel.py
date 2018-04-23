@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
+from django.utils.safestring import mark_safe
+
 
 from .validators import validate_audio_file_extension, validate_audio_file_format
 
@@ -178,6 +180,10 @@ class VoiceFragment(models.Model):
         verbose_name = _('Voice Fragment')
 
     def convert_wav_to_correct_format(self):
+        from vsdk import settings
+        if not settings.KASADAKA:
+            pass
+
         import subprocess
         from os.path import basename
         new_file_name = self.audio.path[:-4] + "_conv.wav"
@@ -189,9 +195,11 @@ class VoiceFragment(models.Model):
 
     def save(self, *args, **kwargs):
         super(VoiceFragment, self).save(*args, **kwargs)
-        format_correct = validate_audio_file_format(self.audio)
-        if not format_correct: 
-            self.convert_wav_to_correct_format()
+        from vsdk import settings
+        if  settings.KASADAKA:
+            format_correct = validate_audio_file_format(self.audio)
+            if not format_correct: 
+                self.convert_wav_to_correct_format()
         super(VoiceFragment, self).save(*args, **kwargs)
 
 
@@ -205,10 +213,24 @@ class VoiceFragment(models.Model):
 
     def validator(self):
         errors = []
+        try:
+            accessible = self.audio.storage.exists(self.audio.name)
+        except NotImplementedError:
+            import urllib.request
+            try:
+                response = urllib.request.urlopen(self.audio.url)
+                accessible = True
+            except urllib.error.HTTPError:
+                accessible = False
+
+
         if not self.audio:
             errors.append(ugettext('%s does not have an audio file')%str(self))
-        elif not validate_audio_file_format(self.audio):
-            errors.append(ugettext('%s audio file is not in the correct format! Should be: Wave: Sample rate 8KHz, 16 bit, mono, Codec: PCM 16 LE (s16l)'%str(self)))
+        elif not accessible:
+            errors.append(ugettext('%s audio file not accessible')%str(self))
+        #TODO verift whether this really is not needed anymore
+        #elif not validate_audio_file_format(self.audio):
+        #    errors.append(ugettext('%s audio file is not in the correct format! Should be: Wave: Sample rate 8KHz, 16 bit, mono, Codec: PCM 16 LE (s16l)'%str(self)))
         return errors
 
     def is_valid(self):
@@ -221,9 +243,8 @@ class VoiceFragment(models.Model):
         if self.audio:
             file_url = settings.MEDIA_URL + str(self.audio)
             player_string = str('<audio src="%s" controls>'  % (file_url) + ugettext('Your browser does not support the audio element.') + '</audio>')
-            return player_string
+            return mark_safe(player_string)
 
-    audio_file_player.allow_tags = True
     audio_file_player.short_description = _('Audio file player')
 
 
