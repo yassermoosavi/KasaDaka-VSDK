@@ -163,7 +163,7 @@ except KeyError:
     SFTP_HOST = ""
     SFTP_PORT = ""
 
-if HEROKU and not DEBUG:
+if HEROKU:
     SFTP_STORAGE_HOST = SFTP_HOST
     SFTP_STORAGE_ROOT = '/django/'
     SFTP_STORAGE_PARAMS = {
