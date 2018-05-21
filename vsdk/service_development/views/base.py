@@ -40,7 +40,7 @@ def call_data(request, session_id):
     from ..models import CallSession, CallSessionStep, VoiceServiceSubElement
     call_session = CallSession.objects.all()
     call_session_details = CallSessionStep.objects.filter(session_id = session_id)
-    call_session_steps = CallSessionStep.objects.get(session_id = session_id, id__in = [10])
+    call_session_steps = CallSessionStep.objects.get(session_id = session_id, id__in = [72, 68, 60, 64])
     message = ''
 	
     if call_session_steps.id == 72:
