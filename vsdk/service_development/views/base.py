@@ -31,3 +31,36 @@ def reverse_add_get_parameters(url_name, *args, **kwargs):
     url = reverse(url_name, args = args)
     params = urllib.parse.urlencode(kwargs)
     return url + "?%s" % params
+
+def user_login(request):
+    template = loader.get_template('user/user_login.html')
+    return HttpResponse(template.render({}, request))
+	
+def call_data(request, session_id):
+    from ..models import CallSession, CallSessionStep, VoiceServiceSubElement
+    call_session = CallSession.objects.all()
+    call_session_details = CallSessionStep.objects.filter(session_id = session_id)
+    call_session_steps = CallSessionStep.objects.get(session_id = session_id, id__in = [10])
+    message = ''
+	
+    if call_session_steps.id == 72:
+	    message = 'Based on the answers provided, Infectious Bursal disease diagnosed!'
+	
+    elif call_session_steps.id == 68:
+	    message = 'Based on the answers provided, New Castle disease diagnosed!' 
+
+    elif call_session_steps.id == 60:
+	    message = 'Based on the answers provided, Fowl Pox disease diagnosed!'
+		
+    elif call_session_steps.id == 64:
+	    message = 'Based on the answers provided, Mareks disease diagnosed!'
+		
+    else:
+	    message = 'Based on the answers provided, no disease could be diagnosed!'
+	
+    return render(request, 'user/call_data.html', {'call_session':call_session, 'message': message, 'call_session_details':call_session_details})
+	
+def session_list(request):
+	from ..models import CallSession
+	call_session_list = CallSession.objects.all()
+	return render(request, 'user/dashboard.html', {'call_session_list': call_session_list})
